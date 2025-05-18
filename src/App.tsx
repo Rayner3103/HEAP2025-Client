@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './views/home/Home';
-import OtherPage from './views/other/OtherPage'; // create this component as needed
+import OtherPage from './views/other/OtherPage';
+import AddPage from './views/add/AddPage'
 import './App.css';
 
 function App() {
@@ -8,7 +9,8 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/other" element={<OtherPage />} />
+        <Route path="/other/" element={<OtherPage />} />
+        <Route path="/add/" element={<AddPage />} />
       </Routes>
     </BrowserRouter>
   );
