@@ -16,7 +16,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "npm start src/index.tsx"
+	"postCreateCommand": "npm install && npm start src/index.tsx"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
