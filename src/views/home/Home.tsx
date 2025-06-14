@@ -1,6 +1,6 @@
 import { 
     Box,
-    Button,
+    // Button,
     Paper,
     Typography
 } from '@mui/material';
@@ -9,6 +9,7 @@ import {
 } from '@mui/x-data-grid';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from "@/components/ui/button";
 
 interface dataSchema {
     id: number,
@@ -51,7 +52,6 @@ const Home = () => {
             filterable: false,
             renderCell: (params: any) => (
                 <Button 
-                    variant="contained" 
                     color="error" 
                     onClick={() => handleDelete(params.row.id)}
                 >
@@ -97,10 +97,18 @@ const Home = () => {
             <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <Typography variant='h2'>Welcome to the Home Page</Typography>
                 <Typography variant='h5'>This is a simple home page component.</Typography>
-                <Button variant='outlined' onClick={handleTestClick}>Test</Button>
+                {/* <Button  onClick={handleTestClick}>Test</Button>
                 <Button variant='outlined' onClick={fetchData}>Read Data</Button>
                 <Button 
                     variant='outlined' 
+                    onClick={() => {
+                        navigate('/add')
+                    }}
+                > */}
+                <Button  onClick={handleTestClick}>Test</Button>
+                <Button  onClick={fetchData}>Read Data</Button>
+                <Button 
+                     
                     onClick={() => {
                         navigate('/add')
                     }}
