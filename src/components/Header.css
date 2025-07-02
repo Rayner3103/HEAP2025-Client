@@ -1,0 +1,6 @@
+.header-backdrop {
+  background-color: #a9b5df;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
