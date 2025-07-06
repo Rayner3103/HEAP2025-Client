@@ -1,14 +1,9 @@
 import {
   NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport
 } from '@/components/ui/navigation-menu';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Input } from './ui/input';
 import { AvatarIcon } from "@radix-ui/react-icons";
 import { useContext } from 'react';
