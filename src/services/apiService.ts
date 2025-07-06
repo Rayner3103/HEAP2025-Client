@@ -2,20 +2,19 @@
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_PUBLIC_API_URL;
-console.log("API_URL ", API_URL);
+// console.log("API_URL ", API_URL);
 
 export const apiService = {
     // Method to perform API requests with authorization headers
-    performRequest: async function(method: string, url: string, data?: any, context?: string, formData = false) {
+    performRequest: async function(method: string, url: string, data?: any, token?: string, formData = false) {
         try {
             // Initialize headers object
-            const headers = {"Content-Type" : "application/json"};
+            const headers: Record<string, string> = {"Content-Type" : "application/json"};
 
-            // If there's context, include authorization header
-            // TODO: RAYNER HELP
-            // if (context && context.token) {
-            //     headers.Authorization = Bearer ${context.token};
-            // }
+            // If there's a token, include authorization header
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
 
             // If formData is true, include Content-Type header
             if (formData) {
@@ -45,8 +44,8 @@ export const apiService = {
                 case "POST":
                     response = await apiClient.post(url, data);
                     break;
-                case "PUT":
-                    response = await apiClient.put(url, data);
+                case "PATCH":
+                    response = await apiClient.patch(url, data);
                     break;
                 case "DELETE":
                     response = await apiClient.delete(url, data);
@@ -54,7 +53,7 @@ export const apiService = {
                 default:
                     throw new Error("Unsupported HTTP method");
             }
-            return response.data;
+            return response;
         } catch (error) {
             throw error;
         }

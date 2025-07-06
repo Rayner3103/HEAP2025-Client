@@ -1,3 +1,4 @@
+import * as UserInterface from '@/interface/user';
 import { apiService } from './apiService';
 
 const API_BASE_URL = '/user';
@@ -23,9 +24,9 @@ export const userService = {
         }
     },
 
-    updateUser: async (userId: string, updateData: JSON, context: string) => {
+    updateUser: async (userId: string, updateData: UserInterface._User, token: string) => {
         try {
-            const res = await apiService.performRequest("PATCH", API_BASE_URL, { userId : userId , updateData : updateData }, context);
+            const res = await apiService.performRequest("PATCH", API_BASE_URL, { userId : userId , updateData : updateData }, token);
             return res.data;
         } catch (e: any) {
             console.log("updateEvent error:", e);
