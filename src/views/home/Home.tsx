@@ -5,8 +5,12 @@ import { useEffect, useState } from "react";
 
 // [Module Imports]
 import * as EventInterface from "@/interface/event";
+import { EventsArr } from "@/interface/eventsArr";
 import { eventService } from '@/services/eventService';
 import ChipInput from "@/components/ChipInput";
+import SectionWhatsNew from "@/views/home/SectionWhatsNew";
+import SectionCompetition from "@/views/home/SectionCompetition";
+import SectionHackathons from "@/views/home/SectionHackathon";
 
 // [Globals]
 interface dataSchema {
@@ -19,7 +23,7 @@ const mockData: Array<EventInterface.Event> = [
   {
     signupLink: "www.example.com",
     createdUserId: "123",
-    title: "example",
+    title: "example1",
     breifDescription: "desc",
     eventType: EventInterface.EventType.OTHERS,
     organisation: "example Org",
@@ -36,7 +40,7 @@ const mockData: Array<EventInterface.Event> = [
   {
     signupLink: "www.example.com2",
     createdUserId: "123",
-    title: "example",
+    title: "example2",
     breifDescription: "desc",
     eventType: EventInterface.EventType.OTHERS,
     organisation: "example Org",
@@ -73,81 +77,13 @@ export default function Home() {
   }, []);
 
   return (
-    <><div>
-      {events.length > 0 && (
-        events.map((event, i) => (
-          <div key={i}>
-            {event.signupLink}
-          </div>
-        ))
-      )}
-    </div><div className="bg-[#FAF9E6]">
-        <h2 className="text-4xl font-bold mb-6 text-center pt-6">OPPORTUNITIES</h2>
-        <div className="flex flex-col items-center justify-center gap-4 mb-8">
-          <WhatsNewSection />
-          <CompetitionsSection />
-          <HackathonsSection />
-        </div>
-      </div></>
-  );
-}
-
-const EventCard = () => {
-    // TODO: Replace with actual data fetching logic
-  return (
-    <div className="flex flex-col items-center bg-white p-6 rounded-lg shadow-md flex-1 min-w-[200px] max-w-[400px]">
-      <img src="/logo.png" alt="Cyber Youth Singapore" className="w-32 h-auto mb-4" />
-      <div className="flex space-x-2 my-2">
-        <span className="bg-indigo-400 text-white px-4 py-1 rounded-full text-sm font-medium">
-          OPPORTUNITY TYPE
-        </span>
-        <span className="bg-indigo-400 text-white px-4 py-1 rounded-full text-sm font-medium">
-          THEME
-        </span>
+    <div className="bg-[#FAF9E6]">
+      <h2 className="text-4xl font-bold mb-6 text-center pt-6">OPPORTUNITIES</h2>
+      <div className="flex flex-col items-center justify-center gap-4 mb-8 w-screen px-10">
+        <SectionWhatsNew events={events} />
+        <SectionCompetition events={events} />
+        <SectionHackathons events={events} />
       </div>
-      <p className="text-sm text-black font-semibold">DETAILS ON EVENT</p>
     </div>
   );
-};
-
-const WhatsNewSection = () => {
-    // TODO: Replace with dynamically fetched data
-  return (
-    <section className="">
-      <h3 className="text-2xl font-semibold mb-4">What’s New</h3>
-      <div className="flex flex-wrap gap-6 justify-between border-2 border-black rounded-3xl p-6">
-        <EventCard />
-        <EventCard />
-        <EventCard />
-      </div>
-    </section>
-  );
-};
-
-const CompetitionsSection = () => {
-    // TODO: Replace with dynamically fetched data
-  return (
-    <section className="">
-      <h3 className="text-2xl font-semibold mb-4">Competitions</h3>
-      <div className="flex flex-wrap gap-6 justify-between border-2 border-black rounded-3xl p-6">
-        <EventCard />
-        <EventCard />
-        <EventCard />
-      </div>
-    </section>
-  );
-};
-
-const HackathonsSection = () => {
-    // TODO: Replace with dynamically fetched data
-  return (
-    <section className="">
-      <h3 className="text-2xl font-semibold mb-4">Hackathons</h3>
-      <div className="flex flex-wrap gap-6 justify-between border-2 border-black rounded-3xl p-6">
-        <EventCard />
-        <EventCard />
-        <EventCard />
-      </div>
-    </section>
-  );
-};
+}
