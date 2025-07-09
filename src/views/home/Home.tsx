@@ -5,8 +5,12 @@ import { useEffect, useState } from "react";
 
 // [Module Imports]
 import * as EventInterface from "@/interface/event";
+import { EventsArr } from "@/interface/eventsArr";
 import { eventService } from '@/services/eventService';
 import ChipInput from "@/components/ChipInput";
+import SectionWhatsNew from "@/views/home/SectionWhatsNew";
+import SectionCompetition from "@/views/home/SectionCompetition";
+import SectionHackathons from "@/views/home/SectionHackathon";
 
 // [Globals]
 interface dataSchema {
@@ -19,7 +23,7 @@ const mockData: Array<EventInterface.Event> = [
   {
     signupLink: "www.example.com",
     createdUserId: "123",
-    title: "example",
+    title: "example1",
     breifDescription: "desc",
     eventType: EventInterface.EventType.OTHERS,
     organisation: "example Org",
@@ -36,7 +40,7 @@ const mockData: Array<EventInterface.Event> = [
   {
     signupLink: "www.example.com2",
     createdUserId: "123",
-    title: "example",
+    title: "example2",
     breifDescription: "desc",
     eventType: EventInterface.EventType.OTHERS,
     organisation: "example Org",
@@ -73,16 +77,13 @@ export default function Home() {
   }, []);
 
   return (
-    <div>
-      {
-        events.length > 0 && (
-          events.map((event, i) => (
-            <div key={i}>
-              {event.signupLink}
-            </div>
-          ))
-        )
-      }
+    <div className="bg-[#FAF9E6]">
+      <h2 className="text-4xl font-bold mb-6 text-center pt-6">OPPORTUNITIES</h2>
+      <div className="flex flex-col items-center justify-center gap-4 mb-8 w-screen px-10">
+        <SectionWhatsNew events={events} />
+        <SectionCompetition events={events} />
+        <SectionHackathons events={events} />
+      </div>
     </div>
   );
 }
