@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ChipInput from "@/components/ChipInput";
 import AlertDialog from "@/components/AlertDialog";
+import { useLoading } from "@/context/OverlayContext";
 
 // [Globals]
 const textFields = ["name", "organisation", "teleUsername"];
@@ -33,6 +34,7 @@ export default function Profile() {
   const [open, setOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
   const [dialogTitle, setDialogTitle] = useState("");
+  const { showLoading, hideLoading } = useLoading();
 
   const handleSignOut = () => {
     setToken("");
@@ -45,6 +47,7 @@ export default function Profile() {
       const res = await userService.getUserById(id, token);
       if (res && res.status) {
         setUser(res.data);
+        hideLoading();
       }
     } catch (e: any) {
       setDialogTitle("Failure");
@@ -101,9 +104,13 @@ export default function Profile() {
   };
 
   useEffect(() => {
+    showLoading();
     if (userId && token) {
       fetchUser(userId, token);
+      return;
     }
+    navigate('/login');
+    hideLoading();
   }, []);
 
   return (

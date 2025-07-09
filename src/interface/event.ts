@@ -2,12 +2,13 @@ export interface Event {
   signupLink: string;
   createdUserId: string;
   title: string;
-  breifDescription: string;
+  briefDescription: string;
   eventType: EventType;
   organisation: string;
   startDate: Date;
   endDate: Date;
   mode: EventMode;
+  image: string;
   location: string;
   signupDeadline: Date;
   origin: EventOrigin;
