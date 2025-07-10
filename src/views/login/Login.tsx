@@ -9,12 +9,12 @@ import { Label } from "@/components/ui/label";
 import AuthContext from "@/context/AuthContext";
 import PasswordInput from "@/components/password-input";
 import { authService } from "@/services/authService";
-import* as GeneralUtils from '@/utils/general';
+import * as GeneralUtils from '@/utils/general';
 
 // [Exports]
 export default function Login() {
   const navigate = useNavigate();
-  const { setToken, setUserId } = useContext(AuthContext);
+  const { setToken, setUserId, setUserEmail } = useContext(AuthContext);
   // TODO: remove the default values
   const [email, setEmail] = useState('raynersimzhiheng@gmail.com');
   const [password, setPassword] = useState('Password');
@@ -32,6 +32,7 @@ export default function Login() {
       if (res && res.status) {
         setToken(res.data.token);
         setUserId(res.data.id);
+        setUserEmail(res.data.email);
         navigate('/');
       }
     } catch (e: any) {

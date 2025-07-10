@@ -9,18 +9,18 @@ export const eventService = {
       return res.data;
     } catch (e: any) {
       console.log("getEventByLink error:", e);
-      throw new Error(e.response?.data?.message || "Fetching events failed");
+      throw new Error(e.response?.data?.error || "Fetching events failed");
     }
   },
-  getEventByLink: async (signupLink: string) => {
+  getEventById: async (eventId: string) => {
     try {
       const res = await apiService.performRequest("GET", API_BASE_URL, {
-        signupLink: signupLink,
+        eventId: eventId,
       });
       return res.data;
     } catch (e: any) {
       console.log("getEventByLink error:", e);
-      throw new Error(e.response?.data?.message || "Fetching events failed");
+      throw new Error(e.response?.data?.error || "Fetching events failed");
     }
   },
   createEvent: async (eventData: FormData, context: string) => {
@@ -35,12 +35,12 @@ export const eventService = {
       return res.data;
     } catch (e: any) {
       console.log("createEvent error:", e);
-      throw new Error(e.response?.data?.message || "Creating events failed");
+      throw new Error(e.response?.data?.error || "Creating events failed");
     }
   },
 
   updateEvent: async (
-    signupLink: string,
+    eventId: string,
     updateData: JSON,
     context: string
   ) => {
@@ -48,28 +48,28 @@ export const eventService = {
       const res = await apiService.performRequest(
         "PATCH",
         API_BASE_URL,
-        { signupLink: signupLink, updateData: updateData },
+        { eventId: eventId, updateData: updateData },
         context
       );
       return res.data;
     } catch (e: any) {
       console.log("updateEvent error:", e);
-      throw new Error(e.response?.data?.message || "Updating events failed");
+      throw new Error(e.response?.data?.error || "Updating events failed");
     }
   },
 
-  deleteEvent: async (signupLink: string, context: string) => {
+  deleteEvent: async (eventId: string, context: string) => {
     try {
       const res = await apiService.performRequest(
         "DELETE",
         API_BASE_URL,
-        { signupLink: signupLink },
+        { eventId: eventId },
         context
       );
       return res.data;
     } catch (e: any) {
       console.log("deleteEvent error:", e);
-      throw new Error(e.response?.data?.message || "Deleting events failed");
+      throw new Error(e.response?.data?.error || "Deleting events failed");
     }
   },
 };
