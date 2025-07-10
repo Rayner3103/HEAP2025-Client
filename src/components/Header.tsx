@@ -11,14 +11,13 @@ import AuthContext from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
-  const {token} = useContext(AuthContext);
+  const {token, userEmail} = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleAvatarClick = () => {
     if (token === '') {
       return navigate('login');
     }
-
     navigate('profile')
   }
 
@@ -38,8 +37,15 @@ export default function Header() {
         </NavigationMenu>
       </div>
       <div className='flex items-center gap-4 p-4'>
-        <AvatarIcon width='58' height='58' onClick={handleAvatarClick}/>
-        <Input type='text' placeholder='Search' value={token}/>
+        <Input type='text' placeholder='Search' />
+        <AvatarIcon width='56' height='56' onClick={handleAvatarClick}/>
+        {
+          userEmail.length > 1 && (
+            <span>
+              Logged in as <em>{userEmail}</em>
+            </span>
+          )
+        }
       </div>
     </div>
   )

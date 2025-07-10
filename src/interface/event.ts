@@ -1,4 +1,5 @@
 export interface Event {
+  eventId: string;
   signupLink: string;
   createdUserId: string;
   title: string;

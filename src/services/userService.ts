@@ -10,7 +10,7 @@ export const userService = {
             return res.data;
         } catch (e: any) {
             console.log("getEventByLink error:", e);
-            throw new Error(e.response?.data?.message || "Fetching user failed");
+            throw new Error(e.response?.data?.error || "Fetching user failed");
         }
     },
 
@@ -20,7 +20,7 @@ export const userService = {
             return res.data;
         } catch (e: any) {
             console.log("createEvent error:", e);
-            throw new Error(e.response?.data?.message || "Creating user failed");
+            throw new Error(e.response?.data?.error || "Creating user failed");
         }
     },
 
@@ -30,7 +30,7 @@ export const userService = {
             return res.data;
         } catch (e: any) {
             console.log("updateEvent error:", e);
-            throw new Error(e.response?.data?.message || "Updating user failed");
+            throw new Error(e.response?.data?.error || "Updating user failed");
         }
     },
 
@@ -40,7 +40,7 @@ export const userService = {
             return res.data;
         } catch (e: any) {
             console.log("deleteEvent error:", e);
-            throw new Error(e.response?.data?.message || "Deleting user failed");
+            throw new Error(e.response?.data?.error || "Deleting user failed");
         }
     },
 }

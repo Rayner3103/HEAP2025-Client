@@ -48,6 +48,7 @@ export default function Profile() {
       if (res && res.status) {
         setUser(res.data);
         hideLoading();
+        return;
       }
     } catch (e: any) {
       setDialogTitle("Failure");

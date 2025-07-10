@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import * as React from 'react';
 
 import Home from "./views/home/Home";
@@ -28,6 +28,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/event/:eventId" element={<Event />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </LoadingProvider>
         </AuthProvider>
