@@ -103,9 +103,9 @@ export default function Event () {
         <div>
           <h2 className="text-lg font-bold mb-2">Details:</h2>
           <div className="bg-gray-400 p-6 rounded-3xl space-y-4">
-            <p className="font-semibold">Event Mode: {event?.mode}</p>
-            <p className="font-semibold">Event Location: {event?.location ?? "unknown"}</p>
-            <p className="font-semibold">Signup Deadline: {event?.signupDeadline?.toLocaleString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+            <p className="font-semibold capitalize">Event Mode: {event?.mode}</p>
+            <p className="font-semibold capitalize">Event Location: {event?.location ?? "unknown"}</p>
+            <p className="font-semibold capitalize">Signup Deadline: {event?.signupDeadline?.toLocaleString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
 
             <div className="pt-8">
               <ReactRouter.Link to={event?.signupLink ?? "/"} target='_blank'>
