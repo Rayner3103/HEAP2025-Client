@@ -59,7 +59,7 @@ export default function ChipInput({ setStateFunction, initialList, field }: Chip
             className="ml-2 text-blue-600 hover:text-blue-900 focus:outline-none"
             onClick={() => handleRemove(chip)}
           >
-            ×
+            
           </button>
         </span>
       ))}
