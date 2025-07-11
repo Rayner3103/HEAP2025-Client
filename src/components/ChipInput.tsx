@@ -49,7 +49,7 @@ export default function ChipInput({ setStateFunction, initialList, field }: Chip
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-2 border rounded px-2 py-1 min-h-[40px] bg-white">
+    <div className="flex flex-wrap items-center gap-2 border rounded px-2 py-1 min-h-[40px] bg-#FAF9E6">
       
       {list.map((chip) => (
         <span key={chip} className="flex items-center bg-blue-200 text-blue-800 rounded-full px-3 py-1 text-sm font-medium mr-2 mb-1">
@@ -59,7 +59,7 @@ export default function ChipInput({ setStateFunction, initialList, field }: Chip
             className="ml-2 text-blue-600 hover:text-blue-900 focus:outline-none"
             onClick={() => handleRemove(chip)}
           >
-            ×
+            
           </button>
         </span>
       ))}
