@@ -17,6 +17,7 @@ export interface Event {
   additionalInformation: string;
   tags: Array<string>;
   createdDateTime: EpochTimeStamp;
+  description: string;
 }
 
 export enum EventType {
