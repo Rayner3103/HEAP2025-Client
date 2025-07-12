@@ -11,6 +11,7 @@ type AuthContextType = {
   setUserEmail: React.Dispatch<React.SetStateAction<string>>;
   role: UserInterface.Role;
   setRole: React.Dispatch<React.SetStateAction<UserInterface.Role>>;
+  clearAuth: () => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   setUserEmail: () => {},
   role: UserInterface.Role.USER,
   setRole: () => {},
+  clearAuth: () => {},
 });
 
 export function AuthProvider({ children }: React.PropsWithChildren<{}>) {
@@ -30,8 +32,15 @@ export function AuthProvider({ children }: React.PropsWithChildren<{}>) {
   const [userEmail, setUserEmail] = useState("");
   const [role, setRole] = useState(UserInterface.Role.USER);
 
+  const clearAuth = () => {
+    setToken('');
+    setUserId('');
+    setUserEmail('');
+    setRole(UserInterface.Role.USER);
+  }
+
   return (
-    <AuthContext.Provider value={{ token, setToken, userId, setUserId, userEmail, setUserEmail, role, setRole }}>
+    <AuthContext.Provider value={{ token, setToken, userId, setUserId, userEmail, setUserEmail, role, setRole, clearAuth }}>
       {children}
     </AuthContext.Provider>
   );

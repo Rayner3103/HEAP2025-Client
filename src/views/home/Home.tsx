@@ -1,7 +1,7 @@
 // [Library Imports]
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 
 // [Module Imports]
 import * as EventInterface from "@/interface/event";
@@ -13,6 +13,9 @@ import SectionFiltered from "@/views/home/SectionFiltered";
 import SectionAll from "@/views/home/SectionAll";
 import { useLoading } from "@/context/OverlayContext";
 import { se } from "date-fns/locale";
+import AuthContext from "@/context/AuthContext";
+import * as UserInterface from "@/interface/user";
+import { useNavigate } from "react-router-dom";
 
 // [Globals]
 interface dataSchema {
@@ -29,6 +32,8 @@ interface Filter {
 export default function Home() {
   const [events, setEvents] = useState<EventInterface.Event[]>([]);
   const { showLoading, hideLoading } = useLoading();
+  const navigate = useNavigate();
+  const { role } = useContext(AuthContext);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -200,6 +205,12 @@ export default function Home() {
             <SectionAll events={events} />
           </div>
         </div>
+      )}
+
+      {role !== UserInterface.Role.USER && (
+        <Button className="fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 bg-indigo-400 text-white text-5xl shadow-lg hover:bg-indigo-600 hover:scale-110 transition-transform duration-200 focus:outline-none" onClick={() => {navigate('/add')}}>
+          +
+        </Button>
       )}
     </div>
   );

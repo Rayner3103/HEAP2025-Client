@@ -27,19 +27,28 @@ const readOnlyText = ["email"];
 
 // [Exports]
 export default function Profile() {
-  const { userId, token, setUserId, setToken, setUserEmail } =
+  const { userId, token, clearAuth} =
     useContext(AuthContext);
   const navigate = useNavigate();
-  const { showAlert } = useAlertDialog();
+  const { showAlert, showConfirm } = useAlertDialog();
   const [user, setUser] = useState<UserInterface.User | null>(null);
   const [updateUser, setUpdateUser] = useState<UserInterface._User>({});
   const { showLoading, hideLoading } = useLoading();
 
   const handleSignOut = () => {
-    setToken("");
-    setUserId("");
-    setUserEmail("");
-    navigate("/login");
+    clearAuth();
+    showConfirm({
+      title: "Success",
+      message: "You are signed out.",
+      okText: "Go to home page",
+      cancelText: 'Go to log in page',
+      onConfirm: () => {
+        navigate("/");
+      },
+      onCancel: () => {
+        navigate('/Login');
+      }
+    });
   };
 
   const fetchUser = async (id: string, token: string) => {

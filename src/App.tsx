@@ -13,6 +13,7 @@ import Event from "./views/event/Event";
 import { LoadingProvider } from "./context/OverlayContext";
 import { AlertDialogProvider } from "@/context/AlertDialogContext";
 import LoadingOverlay from "./components/Overlay";
+import Add from "./views/add/Add";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/event/:eventId" element={<Event />} />
+                <Route path="/add" element={<Add />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </AlertDialogProvider>
