@@ -1,5 +1,5 @@
-import * as EventInterface from '@/interface/event';
 import CreateCard from "@/views/home/Card";
+import * as EventInterface from "@/interface/event";
 
 const SectionWhatsNew = ({events}: {events: EventInterface.Event[]}) => {
   // Filter for the 3 most recent events
