@@ -27,7 +27,7 @@ const readOnlyText = ["email"];
 
 // [Exports]
 export default function Profile() {
-  const { userId, token, setUserId, setToken } = useContext(AuthContext);
+  const { userId, token, setUserId, setToken, setUserEmail } = useContext(AuthContext);
   const navigate = useNavigate();
   const [user, setUser] = useState<UserInterface.User | null>(null);
   const [updateUser, setUpdateUser] = useState<UserInterface._User>({});
@@ -39,6 +39,7 @@ export default function Profile() {
   const handleSignOut = () => {
     setToken("");
     setUserId("");
+    setUserEmail("");
     navigate("/");
   };
 

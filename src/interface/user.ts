@@ -26,7 +26,8 @@ export interface User {
 
 export enum Gender {
   MALE = 'male',
-  FEMALE = 'female'
+  FEMALE = 'female',
+  OTHERS = 'others'
 }
 
 export enum Nationality {
