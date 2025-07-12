@@ -14,7 +14,7 @@ export const userService = {
         }
     },
 
-    createUser: async (userData: JSON) => {
+    createUser: async (userData: UserInterface._User) => {
         try {
             const res = await apiService.performRequest("POST", API_BASE_URL, { userData : userData });
             return res.data;

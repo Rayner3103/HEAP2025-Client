@@ -1,8 +1,7 @@
-import { EventsArr } from "@/interface/eventsArr";
 import CreateCard from "@/views/home/Card";
 import * as EventInterface from "@/interface/event";
 
-const SectionHackathons = ({events}: EventsArr) => {
+const SectionHackathons = ({events}: {events: EventInterface.Event[]}) => {
   // Filter for hackathon events
   const filteredEvents = events.filter(event => event.eventType == EventInterface.EventType.HACKATHON);
   return (

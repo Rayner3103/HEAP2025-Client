@@ -10,7 +10,7 @@ const CreateCard = ({ events }: { events: Event[] }) => {
         events.map((event, i) => (
           <div
             key={i}
-            className="flex flex-col items-center bg-white p-6 rounded-lg shadow-md min-w-[200px] max-w-[400px] h-72 w-96"
+            className="flex flex-col items-center bg-white p-6 rounded-lg shadow-md min-w-[200px] max-w-[400px] h-72 w-96 cursor-pointer hover:bg-black"
             onClick={() => {
               navigate(`/event/${event.eventId}`);
             }}
