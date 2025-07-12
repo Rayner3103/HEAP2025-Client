@@ -4,6 +4,7 @@ export interface Event {
   createdUserId: string;
   title: string;
   briefDescription: string;
+  description: string;
   eventType: EventType;
   organisation: string;
   startDate: Date;
