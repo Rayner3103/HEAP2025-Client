@@ -11,6 +11,7 @@ import SectionCompetition from "@/views/home/SectionCompetition";
 import SectionHackathons from "@/views/home/SectionHackathon";
 import { useLoading } from '@/context/OverlayContext';
 import { se } from "date-fns/locale";
+import SectionFiltered from "./SectionFiltered";
 
 // [Globals]
 interface dataSchema {
@@ -145,9 +146,16 @@ export default function Home() {
     </div>
         {
           selectedFilters.length > 0 ? (
-            <div>hello</div>
+            <div>
+              <h2 className="text-4xl font-bold mb-6 text-center pt-6">
+                OPPORTUNITIES
+              </h2>
+              <div className="flex flex-col items-center justify-center gap-4 mb-8 w-screen px-10">
+                <SectionFiltered events={events} filters={selectedFilters} />
+              </div>
+            </div>
           ) : (
-            <div className="bg-[#FAF9E6]">
+            <div>
               <h2 className="text-4xl font-bold mb-6 text-center pt-6">
                 OPPORTUNITIES
               </h2>
