@@ -37,8 +37,12 @@ export default function SignUp() {
   }, [password, confirmPassword]);
 
   const handleSignUp = async () => {
-    if (GeneralUtils.validateEmail(email)) {
+    if (!GeneralUtils.validateEmail(email)) {
       setErrorMessage("Invalid Email");
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMessage("Password length should be more than 6 characters");
       return;
     }
     const user = {
@@ -51,7 +55,7 @@ export default function SignUp() {
     try {
       const res = await userService.createUser(user);
       if (res && res.status) {
-        navigate('/');
+        navigate('/login');
         return;
       }
     } catch (e: any) {
@@ -129,8 +133,7 @@ export default function SignUp() {
         disabled={
           password === "" ||
           email === "" ||
-          password !== confirmPassword ||
-          errorMessage !== ""
+          password !== confirmPassword
         }
       >
         Sign Up

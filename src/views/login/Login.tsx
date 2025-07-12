@@ -1,5 +1,5 @@
 // [Library Imports]
-import { ChangeEvent, useContext, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 // [Modules imports]
@@ -9,21 +9,27 @@ import { Label } from "@/components/ui/label";
 import AuthContext from "@/context/AuthContext";
 import PasswordInput from "@/components/password-input";
 import { authService } from "@/services/authService";
-import * as GeneralUtils from '@/utils/general';
+import * as GeneralUtils from "@/utils/general";
+import { useAlertDialog } from "@/context/AlertDialogContext";
 
 // [Exports]
 export default function Login() {
   const navigate = useNavigate();
-  const { setToken, setUserId, setUserEmail } = useContext(AuthContext);
+  const { token, setToken, setUserId, setUserEmail, setRole } = useContext(AuthContext);
   // TODO: remove the default values
-  const [email, setEmail] = useState('raynersimzhiheng@gmail.com');
-  const [password, setPassword] = useState('Password');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [email, setEmail] = useState("raynersimzhiheng@gmail.com");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const { showAlert, showConfirm } = useAlertDialog();
 
   const handleLogin = async () => {
     // console.log('handle login here!');
     if (!GeneralUtils.validateEmail(email)) {
-      setErrorMessage("Invalid Email Format");
+      showAlert({
+        title: "Alert",
+        message: "Invalid Email Format",
+        onConfirm: () => {},
+      });
       return;
     }
 
@@ -33,24 +39,46 @@ export default function Login() {
         setToken(res.data.token);
         setUserId(res.data.id);
         setUserEmail(res.data.email);
-        navigate('/');
+        setRole(res.data.role);
+        showConfirm({
+          title: "Success",
+          message: "You are signed in.",
+          okText: "Go to home page",
+          cancelText: 'Go to my profile',
+          onConfirm: () => {
+            navigate("/");
+          },
+          onCancel: () => {
+            navigate('/profile');
+          }
+        });
       }
     } catch (e: any) {
-      setErrorMessage(e.message);
+      showAlert({
+        title: "Error",
+        message: e.message,
+        onConfirm: () => {},
+      });
     }
-  }
+  };
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-  }
+  };
 
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-  }
+  };
 
   const routeToCreateAcount = () => {
-    navigate('/signup')
-  }
+    navigate("/signup");
+  };
+
+  useEffect(() => {
+    if (token !== '') {
+      navigate('/');
+    }
+  }, [])
 
   return (
     <div className="bg-[#FAF9E6] min-h-screen flex justify-center p-6">
@@ -58,13 +86,13 @@ export default function Login() {
         <h1 className="text-2xl font-bold mb-2">Login</h1>
 
         {/* Error message */}
-        {errorMessage && (
-          <p className="text-sm text-red-500">{errorMessage}</p>
-        )}
+        {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
 
         {/* Email Input */}
         <div className="flex flex-col">
-          <Label className="mb-1 text-sm font-medium text-gray-800">Email</Label>
+          <Label className="mb-1 text-sm font-medium text-gray-800">
+            Email
+          </Label>
           <Input
             type="email"
             placeholder="Email"
@@ -76,7 +104,9 @@ export default function Login() {
 
         {/* Password Input */}
         <div className="flex flex-col">
-          <Label className="mb-1 text-sm font-medium text-gray-800">Password</Label>
+          <Label className="mb-1 text-sm font-medium text-gray-800">
+            Password
+          </Label>
           <PasswordInput
             placeholder="Password"
             value={password}
@@ -89,7 +119,7 @@ export default function Login() {
         <div className="flex justify-between text-sm text-blue-600 mt-2">
           <button
             type="button"
-            onClick={() => console.log('Forgot Password')}
+            onClick={() => console.log("Forgot Password")}
             className="hover:underline"
           >
             Forgot Password
@@ -113,5 +143,5 @@ export default function Login() {
         </Button>
       </div>
     </div>
-  )
+  );
 }
