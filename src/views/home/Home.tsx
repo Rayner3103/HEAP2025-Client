@@ -65,6 +65,9 @@ export default function Home() {
   useEffect(() => {
     showLoading();
     fetchEvent();
+    return () => {
+      hideLoading();
+    }
   }, []);
 
   const handleFilterClick = (filterId: string) => {
