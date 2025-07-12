@@ -1,7 +1,7 @@
-import { EventsArr } from "@/interface/eventsArr";
 import CreateCard from "@/views/home/Card";
+import * as EventInterface from "@/interface/event";
 
-const SectionWhatsNew = ({events}: EventsArr) => {
+const SectionWhatsNew = ({events}: {events: EventInterface.Event[]}) => {
   // Filter for the 3 most recent events
   const filteredEvents = events.toSorted((a,b) => b.createdDateTime - a.createdDateTime).slice(0,3);
   return (
