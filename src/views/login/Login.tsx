@@ -11,15 +11,16 @@ import PasswordInput from "@/components/password-input";
 import { authService } from "@/services/authService";
 import * as GeneralUtils from "@/utils/general";
 import { useAlertDialog } from "@/context/AlertDialogContext";
+import { useLoading } from "@/context/OverlayContext";
 
 // [Exports]
 export default function Login() {
   const navigate = useNavigate();
   const { token, setToken, setUserId, setUserEmail, setRole } = useContext(AuthContext);
+  const { showLoading, hideLoading } = useLoading();
   // TODO: remove the default values
   const [email, setEmail] = useState("raynersimzhiheng@gmail.com");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const { showAlert, showConfirm } = useAlertDialog();
 
   const handleLogin = async () => {
@@ -32,9 +33,11 @@ export default function Login() {
       });
       return;
     }
+    showLoading();
 
     try {
       const res = await authService.login(email, password);
+      hideLoading();
       if (res && res.status) {
         setToken(res.data.token);
         setUserId(res.data.id);
@@ -84,9 +87,6 @@ export default function Login() {
     <div className="h-full flex justify-center p-6">
       <div className="w-full max-w-md bg-[#FAF9E6] p-6 rounded-md space-y-4">
         <h1 className="text-2xl font-bold mb-2">Login</h1>
-
-        {/* Error message */}
-        {errorMessage && <p className="text-sm text-red-500">{errorMessage}</p>}
 
         {/* Email Input */}
         <div className="flex flex-col">

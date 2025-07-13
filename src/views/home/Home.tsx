@@ -18,12 +18,6 @@ import * as UserInterface from "@/interface/user";
 import { useNavigate } from "react-router-dom";
 
 // [Globals]
-interface dataSchema {
-  id: number;
-  name: number;
-  created_at: number;
-}
-
 interface Filter {
   name: string;
 }
@@ -60,7 +54,9 @@ export default function Home() {
       return tags.indexOf(tag) == pos;
     });
     // Fit filter format of Filter[]
-    const filterArr: Filter[] = tags.map((tag) => ({ name: tag }));
+    const filterArr: Filter[] = tags
+      .map((tag) => ({ name: tag }))
+      .sort((a, b) => a.name.localeCompare(b.name));
     setFilters(filterArr);
   };
 
@@ -208,7 +204,12 @@ export default function Home() {
       )}
 
       {role !== UserInterface.Role.USER && (
-        <Button className="fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 bg-indigo-400 text-white text-5xl shadow-lg hover:bg-indigo-600 hover:scale-110 transition-transform duration-200 focus:outline-none" onClick={() => {navigate('/add')}}>
+        <Button
+          className="fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 bg-indigo-400 text-white text-5xl shadow-lg hover:bg-indigo-600 hover:scale-110 transition-transform duration-200 focus:outline-none"
+          onClick={() => {
+            navigate("/add");
+          }}
+        >
           +
         </Button>
       )}

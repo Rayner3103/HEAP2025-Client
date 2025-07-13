@@ -97,12 +97,11 @@ export default function Profile() {
       });
       return;
     }
+    showLoading();
     try {
       const res = await userService.updateUser(userId, updateUser, token);
+      hideLoading();
       if (res && res.status) {
-        // setDialogTitle("Success");
-        // setDialogMessage("Update successful!");
-        // setOpen(true);
         showAlert({
           title: "Success",
           message: "Update successful",
