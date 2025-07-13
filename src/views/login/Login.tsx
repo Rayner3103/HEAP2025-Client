@@ -81,7 +81,7 @@ export default function Login() {
   }, [])
 
   return (
-    <div className="bg-[#FAF9E6] min-h-screen flex justify-center p-6">
+    <div className="h-full flex justify-center p-6">
       <div className="w-full max-w-md bg-[#FAF9E6] p-6 rounded-md space-y-4">
         <h1 className="text-2xl font-bold mb-2">Login</h1>
 

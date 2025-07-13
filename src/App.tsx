@@ -17,28 +17,26 @@ import Add from "./views/add/Add";
 
 function App() {
   return (
-    <React.StrictMode>
-      <BrowserRouter>
-        <AuthProvider>
-          <LoadingProvider>
-            <AlertDialogProvider>
-              <Header />
-              <LoadingOverlay />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about-us" element={<About />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/event/:eventId" element={<Event />} />
-                <Route path="/add" element={<Add />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </AlertDialogProvider>
-          </LoadingProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <LoadingProvider>
+          <AlertDialogProvider>
+            <Header />
+            <LoadingOverlay />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about-us" element={<About />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/event/:eventId" element={<Event />} />
+              <Route path="/add" element={<Add />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </AlertDialogProvider>
+        </LoadingProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 

@@ -72,7 +72,7 @@ export default function Profile() {
     e: ChangeEvent<HTMLInputElement>,
     key: string
   ) => {
-    const newValue = e.target.value;
+    const newValue = Math.min(Math.max(0, Number(e.target.value)), 150);
     setUpdateUser((prev) => {
       return {
         ...prev,
