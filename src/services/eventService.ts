@@ -49,15 +49,13 @@ export const eventService = {
       throw new Error(e.response?.data?.error || "Fetching events failed");
     }
   },
-  createEvent: async (eventData: EventInterface._Event, context: string) => {
+  createEvent: async (eventData: FormData, token: string) => {
     try {
-      eventData['origin'] = EventInterface.EventOrigin.UPLOAD;
-      const formData = convertEventToFormData(eventData);
       const res = await apiService.performRequest(
         "POST",
         API_BASE_URL,
-        formData,
-        context,
+        eventData,
+        token,
         true
       );
       return res.data;

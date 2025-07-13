@@ -1,8 +1,9 @@
-// TODO: make it easier to remove the image
-// [Library Imports]
+import { Controller, useForm } from "react-hook-form";
+import { useContext, useState } from "react";
+
 import { Button } from "@/components/ui/button";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectTrigger,
@@ -10,329 +11,315 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import ChipInput from "@/components/ChipInput";
 
-// [Module Imports]
-import AuthContext from "@/context/AuthContext";
-import { useAlertDialog } from "@/context/AlertDialogContext";
-import { useLoading } from "@/context/OverlayContext";
+import ChipInput from "@/components/ChipInput";
 import * as EventInterface from "@/interface/event";
 import { eventService } from "@/services/eventService";
-import { Calendar } from "@/components/ui/calendar";
+import AuthContext from "@/context/AuthContext";
 
-// [Globals]
-const textFields = [
-  "title",
-  "briefDescription",
-  "description",
-  "organisers",
-  "venue",
-  "signupLink",
-  "link",
-  "additionalInformation",
-];
+type EventFormValues = {
+  title: string;
+  briefDescription?: string;
+  description?: string;
+  eventType: string;
+  organisers?: string;
+  startTime: string;
+  endTime: string;
+  mode: string;
+  venue?: string;
+  signupDeadline?: Date;
+  signupLink: string;
+  tags?: string[];
+  link?: string;
+  additionalInformation?: string;
+  image?: FileList;
+};
 
-const dateFields = ["signupDeadline"];
+export default function AddEventForm() {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm<EventFormValues>();
 
-const selectFields = [
-  { key: "eventType", options: EventInterface.EventType },
-  { key: "mode", options: EventInterface.EventMode },
-];
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [tagObject, setTagObject] = useState({});
+  const { token } = useContext(AuthContext);
 
-const requiredFields = ["title", "eventType", "mode", "signupLink"];
+  const startTime = watch("startTime");
+  const endTime = watch("endTime");
 
-// [Exports]
-export default function EventForm() {
-  const { userId, token } = useContext(AuthContext);
-  const navigate = useNavigate();
-  const { showAlert } = useAlertDialog();
-  const { showLoading, hideLoading } = useLoading();
+  const onSubmit = async (data: EventFormValues) => {
+    const formData = new FormData();
 
-  const [newEvent, setNewEvent] = useState<EventInterface._Event>({});
+    formData.append("origin", 'upload');
 
-  const handleFieldChange = (e: ChangeEvent<HTMLInputElement>, key: string) => {
-    setNewEvent((prev) => ({
-      ...prev,
-      [key]: e.target.value,
-    }));
-  };
+    // Add primitive fields
+    formData.append("title", data.title);
+    formData.append("eventType", data.eventType);
+    formData.append("startTime", data.startTime);
+    formData.append("endTime", data.endTime);
+    formData.append("mode", data.mode);
+    formData.append("signupLink", data.signupLink);
 
-  const handleDateChange = (date: Date | undefined, key: string) => {
-    if (!date) {
-      return;
+    // Optional fields
+    if (data.briefDescription) {
+      formData.append("briefDescription", data.briefDescription);
     }
-    setNewEvent((prev) => ({
-      ...prev,
-      [key]: date,
-    }));
-  };
-
-  const handleTextareaChange = (
-    e: ChangeEvent<HTMLTextAreaElement>,
-    key: string
-  ) => {
-    setNewEvent((prev) => ({
-      ...prev,
-      [key]: e.target.value,
-    }));
-  };
-
-  const handleEnumChange = (key: string, value: string) => {
-    setNewEvent((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  const handleSubmit = async () => {
-    console.log(newEvent);
-    // Validation
-    const missingFields = requiredFields.filter(
-      (field) => !newEvent[field as keyof EventInterface._Event]
-    );
-
-    if (missingFields.length > 0) {
-      showAlert({
-        title: "Missing Fields",
-        message: `Please fill in: ${missingFields.join(", ")}`,
-        onConfirm: () => {},
-      });
-      return;
+    if (data.description) {
+      formData.append("description", data.description);
+    }
+    if (data.organisers) {
+      formData.append("organisers", data.organisers);
+    }
+    if (data.venue) {
+      formData.append("venue", data.venue);
+    }
+    if (data.link) {
+      formData.append("link", data.link);
+    }
+    if (data.additionalInformation) {
+      formData.append("additionalInformation", data.additionalInformation);
     }
 
-    showLoading();
-    try {
-      const res = await eventService.createEvent(newEvent, token);
-      // const res = undefined;
-      hideLoading();
+    // Handle signupDeadline (convert Date to ISO string)
+    if (data.signupDeadline) {
+      formData.append("signupDeadline", data.signupDeadline.toISOString());
+    }
 
-      if (res && res.status) {
-        showAlert({
-          title: "Success",
-          message: "Event created successfully!",
-          onConfirm: () => navigate("/events"),
-        });
+    // Handle image (FileList)
+    if (data.image && data.image.length > 0) {
+      formData.append("image", data.image[0]); // only allow 1 image
+    }
+
+    if ("tags" in tagObject) {
+      (tagObject.tags as string[]).forEach((tag) => {
+        formData.append("tags", tag);
+      })
+    }
+    const response = await eventService.createEvent(formData, token);
+    console.log("Form Submitted:", response, formData);
+
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!["image/jpeg", "image/png"].includes(file.type)) {
+        alert("Only .jpg and .png files are allowed.");
+        setValue("image", undefined);
+        setImagePreview(null);
         return;
       }
-
-      showAlert({
-        title: "Failure",
-        message: "Failed to create event. Please try again later.",
-        onConfirm: () => {},
-      });
-    } catch (e: any) {
-      hideLoading();
-      showAlert({
-        title: "Error",
-        message: e.message,
-        onConfirm: () => {},
-      });
+      if (file.size > 2 * 1024 * 1024) {
+        alert("File size must be less than 2MB.");
+        setValue("image", undefined);
+        setImagePreview(null);
+        return;
+      }
+      setImagePreview(URL.createObjectURL(file));
     }
   };
-
-  useEffect(() => {
-    if (!userId || !token) {
-      navigate("/login");
-    }
-  }, []);
 
   return (
     <div className="bg-[#FAF9E6] min-h-screen p-8">
-      <form className="max-w-3xl mx-auto space-y-4">
-        <h1 className="text-2xl font-bold mb-4">Create New Event</h1>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="max-w-4xl mx-auto space-y-4"
+      >
+        {/* Title */}
+        <div className="flex flex-col">
+          <Label>Title *</Label>
+          <Input {...register("title", { required: "Title is required" })} />
+          {errors.title && (
+            <span className="text-red-500 text-sm">{errors.title.message}</span>
+          )}
+        </div>
 
-        {/* Text fields */}
-        {textFields.map((key, i) => (
-          <div className="flex flex-col" key={i}>
-            <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-              {key.replace(/([A-Z])/g, " $1").toLowerCase()}:
-            </Label>
-            {key === "briefDescription" || key === "description" ? (
-              <Textarea
-                value={
-                  (newEvent[key as keyof EventInterface._Event] as string) ?? ""
-                }
-                onChange={(e) => handleTextareaChange(e, key)}
-                className="rounded-md border border-gray-300 px-4 py-2"
-              />
-            ) : (
-              <Input
-                value={
-                  (newEvent[key as keyof EventInterface._Event] as string) ?? ""
-                }
-                onChange={(e) => handleFieldChange(e, key)}
-                className="rounded-md border border-gray-300 px-4 py-2"
-              />
-            )}
-          </div>
-        ))}
+        {/* Event Type */}
+        <div className="flex flex-col">
+          <Label>Event Type *</Label>
+          <Select
+            onValueChange={(value) => setValue("eventType", value)}
+            {...register("eventType", { required: "Event type is required" })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select an event type" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(EventInterface.EventType).map(([key, type]) => (
+                <SelectItem key={key} value={type}>
+                  {type}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.eventType && (
+            <span className="text-red-500 text-sm">
+              {errors.eventType.message}
+            </span>
+          )}
+        </div>
+
+        {/* Signup Link */}
+        <div className="flex flex-col">
+          <Label>Signup Link *</Label>
+          <Input
+            {...register("signupLink", {
+              required: "Signup link is required",
+              pattern: {
+                value:
+                  /^https?:\/\/(?:www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/,
+                message: "Must be a valid URL",
+              },
+            })}
+          />
+          {errors.signupLink && (
+            <span className="text-red-500 text-sm">
+              {errors.signupLink.message}
+            </span>
+          )}
+        </div>
+
+        {/* Mode */}
+        <div className="flex flex-col">
+          <Label>Mode *</Label>
+          <Select
+            onValueChange={(value) => setValue("mode", value)}
+            {...register("mode", { required: "Mode is required" })}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a mode" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.entries(EventInterface.EventMode).map(([key, mode]) => (
+                <SelectItem key={mode} value={mode}>
+                  {mode}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {errors.mode && (
+            <span className="text-red-500 text-sm">{errors.mode.message}</span>
+          )}
+        </div>
+
+        {/* Brief Description */}
+        <div className="flex flex-col">
+          <Label>Brief Description</Label>
+          <Input {...register("briefDescription")} />
+        </div>
+
+        {/* Description */}
+        <div className="flex flex-col">
+          <Label>Description</Label>
+          <Textarea
+            {...register("description")}
+            className="border rounded-md p-2"
+            rows={3}
+          />
+        </div>
+
+        {/* Organisers */}
+        <div className="flex flex-col">
+          <Label>Organiser(s)</Label>
+          <Input {...register("organisers")} />
+        </div>
 
         {/* Start Time */}
         <div className="flex flex-col">
-          <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-            Start Time:
-          </Label>
-          <Input
-            type="time"
-            value={newEvent.startTime ?? ""}
-            onChange={(e) =>
-              setNewEvent((prev) => ({
-                ...prev,
-                startTime: e.target.value, // format: "HH:mm"
-              }))
-            }
-            className="rounded-md border border-gray-300 px-4 py-2"
-          />
+          <Label>Start Time</Label>
+          <Input type="time" {...register("startTime")} />
+          {errors.startTime && (
+            <span className="text-red-500 text-sm">
+              {errors.startTime.message}
+            </span>
+          )}
         </div>
 
         {/* End Time */}
         <div className="flex flex-col">
-          <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-            End Time:
-          </Label>
+          <Label>End Time</Label>
           <Input
             type="time"
-            value={newEvent.endTime ?? ""}
-            onChange={(e) =>
-              setNewEvent((prev) => ({
-                ...prev,
-                endTime: e.target.value, // format: "HH:mm"
-              }))
+            {...register("endTime", {
+              validate: (value) =>
+                !value ||
+                (!startTime && "Start time should be specified") ||
+                value > startTime ||
+                "End time must be after start time",
+            })}
+          />
+          {errors.endTime && (
+            <span className="text-red-500 text-sm">
+              {errors.endTime.message}
+            </span>
+          )}
+        </div>
+
+        {/* Venue */}
+        <div className="flex flex-col">
+          <Label>Venue</Label>
+          <Input {...register("venue")} />
+        </div>
+
+        {/* Signup Deadline */}
+        <div className="flex flex-col">
+          <Label>Signup Deadline</Label>
+          <Input type="date" {...register("signupDeadline")} />
+        </div>
+
+        {/* Tags (ChipInput) */}
+        <div>
+          <Label>Tags</Label>
+          <ChipInput
+            field="tags"
+            initialList={
+              "tags" in tagObject ? (tagObject.tags as string[]) : []
             }
-            className="rounded-md border border-gray-300 px-4 py-2"
-            disabled={!newEvent.startTime} // Disable if startTime is empty
+            setStateFunction={setTagObject}
           />
         </div>
 
-        {/* Date fields */}
-        {dateFields.map((key, i) => (
-          <div className="flex flex-col" key={i}>
-            <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-              {key.replace(/([A-Z])/g, " $1").toLowerCase()}:
-            </Label>
-            <Calendar
-              mode="single"
-              selected={newEvent[key as keyof EventInterface._Event] as Date}
-              onSelect={(date) => handleDateChange(date, key)}
-              className="rounded-md border border-gray-300 px-4 py-2"
-            />
-          </div>
-        ))}
-
-        {/* Enum fields */}
-        {selectFields.map(({ key, options }) => (
-          <div className="flex flex-col" key={key}>
-            <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-              {key.replace(/([A-Z])/g, " $1").toLowerCase()}:
-            </Label>
-            <Select
-              value={
-                (newEvent[key as keyof EventInterface._Event] as string) ?? ""
-              }
-              onValueChange={(value) => handleEnumChange(key, value)}
-            >
-              <SelectTrigger className="w-full rounded-md border border-gray-300 px-4 py-2">
-                <SelectValue placeholder={`Select ${key}`} />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(options).map(([key, value]) => (
-                  <SelectItem value={value} key={value}>
-                    {value.charAt(0).toUpperCase() + value.slice(1)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        ))}
-
-        {/* Tags */}
+        {/* Additional Information */}
         <div className="flex flex-col">
-          <Label className="mb-1 text-sm font-medium text-gray-800">
-            Tags:
-          </Label>
-          <ChipInput
-            setStateFunction={setNewEvent}
-            field="tags"
-            initialList={[]}
+          <Label>Additional Information</Label>
+          <Textarea
+            {...register("additionalInformation")}
+            className="border rounded-md p-2"
+            rows={3}
           />
         </div>
 
         {/* Image Upload */}
         <div className="flex flex-col">
-          <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-            Event Image:
-          </Label>
+          <Label>Event Image (Max 2MB, JPG/PNG)</Label>
           <Input
             type="file"
-            accept=".jpg,.jpeg,.png" // restrict file types
-            onChange={(e) => {
-              const file = e.target.files?.[0]; // only take first file
-              if (file) {
-                const maxSize = 2 * 1024 * 1024; // 2MB in bytes
-                const allowedTypes = ["image/jpeg", "image/png"];
-
-                // Validate file type
-                if (!allowedTypes.includes(file.type)) {
-                  showAlert({
-                    title: "Invalid File Type",
-                    message: "Only .jpg and .png images are allowed.",
-                    onConfirm: () => {},
-                  });
-                  return;
-                }
-
-                // Validate file size
-                if (file.size > maxSize) {
-                  showAlert({
-                    title: "File Too Large",
-                    message: "Image size must be under 2MB.",
-                    onConfirm: () => {},
-                  });
-                  return;
-                }
-
-                // All validations passed
-                setNewEvent((prev) => ({
-                  ...prev,
-                  image: file, // store the File object
-                }));
-              }
-            }}
-            className="rounded-md border border-gray-300 px-4 py-2"
+            accept=".jpg,.png"
+            {...register("image")}
+            onChange={handleImageChange}
           />
-
-          {/* Image Preview */}
-          {newEvent.image && (
-            <div className="mt-2">
-              <img
-                src={URL.createObjectURL(newEvent.image)}
-                alt="Event preview"
-                className="w-40 h-40 object-cover rounded-md border"
-              />
-            </div>
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="mt-2 h-32 object-contain rounded border"
+            />
           )}
         </div>
 
-        {/* Buttons */}
-        <div className="flex gap-4 pt-4">
-          <Button
-            type="button"
-            onClick={handleSubmit}
-            className="bg-black text-white px-6 py-2 rounded-md"
-          >
-            Create Event
-          </Button>
-          <Button
-            type="button"
-            onClick={() => navigate("/events")}
-            className="bg-gray-500 text-white px-6 py-2 rounded-md"
-          >
-            Cancel
-          </Button>
-        </div>
+        {/* Submit */}
+        <Button
+          type="submit"
+          className="bg-black text-white px-6 py-2 rounded-md"
+        >
+          Submit Event
+        </Button>
       </form>
     </div>
   );
