@@ -1,6 +1,32 @@
+import * as EventInterface from "@/interface/event";
 import { apiService } from "./apiService";
 
 const API_BASE_URL = "/event";
+
+function convertEventToFormData(event: EventInterface._Event): FormData {
+  const formData = new FormData();
+
+  Object.entries(event).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+
+    if (Array.isArray(value)) {
+      // For arrays like tags
+      value.forEach((item, index) => {
+        formData.append(`${key}`, item);
+      });
+    } else if (value instanceof Date) {
+      // Convert Date objects to ISO strings
+      formData.append(key, value.toISOString());
+    } else if (value instanceof File) {
+      console.log(key, value)
+      formData.append(key, value);
+    } else {
+      formData.append(key, value.toString());
+    }
+  });
+
+  return formData;
+}
 
 export const eventService = {
   getEvents: async () => {
@@ -23,12 +49,14 @@ export const eventService = {
       throw new Error(e.response?.data?.error || "Fetching events failed");
     }
   },
-  createEvent: async (eventData: FormData, context: string) => {
+  createEvent: async (eventData: EventInterface._Event, context: string) => {
     try {
+      eventData['origin'] = EventInterface.EventOrigin.UPLOAD;
+      const formData = convertEventToFormData(eventData);
       const res = await apiService.performRequest(
         "POST",
         API_BASE_URL,
-        { eventData: eventData },
+        formData,
         context,
         true
       );

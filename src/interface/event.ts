@@ -7,8 +7,8 @@ export interface Event {
   description: string;
   eventType: EventType;
   organisation: string;
-  startDate: Date;
-  endDate: Date;
+  startTime: string;
+  endTime: string;
   mode: EventMode;
   image: string;
   location: string;
@@ -19,9 +19,30 @@ export interface Event {
   createdDateTime: EpochTimeStamp;
 }
 
+export interface _Event {
+  eventId?: string;
+  signupLink?: string;
+  createdUserId?: string;
+  title?: string;
+  briefDescription?: string;
+  description?: string;
+  eventType?: EventType;
+  organisation?: string;
+  startTime?: string;
+  endTime?: string;
+  mode?: EventMode;
+  image?: File;
+  location?: string;
+  signupDeadline?: Date;
+  origin?: EventOrigin;
+  additionalInformation?: string;
+  tags?: Array<string>;
+  createdDateTime?: EpochTimeStamp;
+}
+
 export enum EventType {
-  TALK = "Talk",
-  WORKSHOP = "Workshop",
+  TALK = "Talks",
+  WORKSHOP = "Workshops",
   CASE_COMPS = "Case Comps",
   HACKATHON = "Hackathons",
   OTHERS = "Others",
