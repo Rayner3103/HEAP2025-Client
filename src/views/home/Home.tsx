@@ -11,7 +11,8 @@ import SectionCompetition from "@/views/home/SectionCompetition";
 import SectionHackathons from "@/views/home/SectionHackathon";
 import { useLoading } from '@/context/OverlayContext';
 import { se } from "date-fns/locale";
-import SectionFiltered from "./SectionFiltered";
+import SectionFiltered from "@/views/home/SectionFiltered";
+import DisplaySection from "@/views/home/DisplaySection";
 
 // [Globals]
 interface dataSchema {
@@ -170,6 +171,7 @@ export default function Home() {
                 <SectionWhatsNew events={events} />
                 <SectionCompetition events={events} />
                 <SectionHackathons events={events} />
+                <DisplaySection events={events} sectionTitle="All Opportunities"/>
               </div>
             </div>
           )
