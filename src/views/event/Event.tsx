@@ -76,7 +76,7 @@ export default function Event () {
                 <img
                   src={event?.image}
                   alt={event?.organisation}
-                  className="w-32 h-auto mb-4"
+                  className="max-w-128 h-auto mb-4"
                 />
               )}
           </div>
