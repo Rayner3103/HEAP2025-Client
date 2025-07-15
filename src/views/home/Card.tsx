@@ -28,7 +28,7 @@ const CreateCard = ({ events }: { events: Event[] }) => {
               <h2 className="text-center">
                 <b>{event.title}</b>
               </h2>
-              <div className="flex flex-wrap gap-2 my-2 justify-center max-h-20 overflow-hidden">
+              <div className="flex flex-wrap gap-2 my-2 justify-center max-h-20 overflow-hidden overflow-y-auto">
                 <span className="bg-indigo-400 text-white px-4 py-1 rounded-full text-sm font-medium">
                   {event.eventType}
                 </span>

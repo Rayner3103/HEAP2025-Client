@@ -1,7 +1,7 @@
 // [Library Imports]
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 
 // [Module Imports]
 import * as EventInterface from "@/interface/event";
@@ -9,18 +9,17 @@ import { eventService } from "@/services/eventService";
 import SectionWhatsNew from "@/views/home/SectionWhatsNew";
 import SectionCompetition from "@/views/home/SectionCompetition";
 import SectionHackathons from "@/views/home/SectionHackathon";
-import { useLoading } from '@/context/OverlayContext';
+import SectionFiltered from "@/views/home/SectionFiltered";
+import SectionAll from "@/views/home/SectionAll";
+import { useLoading } from "@/context/OverlayContext";
 import { se } from "date-fns/locale";
 import SectionFiltered from "@/views/home/SectionFiltered";
 import DisplaySection from "@/views/home/DisplaySection";
+import AuthContext from "@/context/AuthContext";
+import * as UserInterface from "@/interface/user";
+import { useNavigate } from "react-router-dom";
 
 // [Globals]
-interface dataSchema {
-  id: number;
-  name: number;
-  created_at: number;
-}
-
 interface Filter {
   name: string;
 }
@@ -29,6 +28,8 @@ interface Filter {
 export default function Home() {
   const [events, setEvents] = useState<EventInterface.Event[]>([]);
   const { showLoading, hideLoading } = useLoading();
+  const navigate = useNavigate();
+  const { role } = useContext(AuthContext);
   const [filters, setFilters] = useState<Filter[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -57,13 +58,13 @@ export default function Home() {
       e => e.tags
     ).flat(1)
     // Only keep unique tags
-    tags = tags.filter(function(tag, pos) {
-      return tags.indexOf(tag) == pos
-    })
+    tags = tags.filter(function (tag, pos) {
+      return tags.indexOf(tag) == pos;
+    });
     // Fit filter format of Filter[]
-    const filterArr: Filter[] = tags.map(
-      tag => ({name: tag})
-    )
+    const filterArr: Filter[] = tags
+      .map((tag) => ({ name: tag }))
+      .sort((a, b) => a.name.localeCompare(b.name));
     setFilters(filterArr);
   };
 
@@ -72,7 +73,7 @@ export default function Home() {
     fetchEvent();
     return () => {
       hideLoading();
-    }
+    };
   }, []);
 
   const handleFilterClick = (filterId: string) => {
@@ -87,27 +88,46 @@ export default function Home() {
     });
   };
 
-  const scroll = (direction: 'left' | 'right') => {
+  const scroll = (direction: "left" | "right") => {
     if (scrollContainerRef.current) {
       const scrollAmount = 200;
-      if (direction === 'left') {
-        scrollContainerRef.current.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+      if (direction === "left") {
+        scrollContainerRef.current.scrollBy({
+          left: -scrollAmount,
+          behavior: "smooth",
+        });
       } else {
-        scrollContainerRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        scrollContainerRef.current.scrollBy({
+          left: scrollAmount,
+          behavior: "smooth",
+        });
       }
     }
   };
-  
+
   return (
     <div>
       <div className="flex items-center w-full max-w-screen px-auto py-4 min-h-10">
         {/* Left scroll arrow */}
         <button
-          onClick={() => scroll('left')}
+          onClick={() => scroll("left")}
           className="flex-shrink-0 p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
           aria-label="Scroll left"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M15 19l-7-7 7-7"
+            ></path>
+          </svg>
         </button>
 
         {/* Scrollable filter container */}
@@ -131,25 +151,41 @@ export default function Home() {
                 transition-colors
                 duration-300
                 ease-in-out
-                ${selectedFilters.includes(filter.name)
-                  ? 'bg-indigo-400 text-white' // Selected state: Specific background color, dark text
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}
+                ${
+                  selectedFilters.includes(filter.name)
+                    ? "bg-indigo-400 text-white" // Selected state: Specific background color, dark text
+                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                }
               `}
               onClick={() => handleFilterClick(filter.name)}
             >
               {/* Removed icon rendering: {filter.icon && <span className="mr-2">{getIcon(filter.icon)}</span>} */}
-              <span>{filter.name}</span> {/* Text is now the only content, centered by parent justify-center */}
+              <span>{filter.name}</span>{" "}
+              {/* Text is now the only content, centered by parent justify-center */}
             </button>
           ))}
         </div>
 
         {/* Right scroll arrow */}
         <button
-          onClick={() => scroll('right')}
+          onClick={() => scroll("right")}
           className="flex-shrink-0 p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
           aria-label="Scroll right"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M9 5l7 7-7 7"
+            ></path>
+          </svg>
         </button>
     </div>
         {
@@ -179,7 +215,16 @@ export default function Home() {
     </div>
 
 
-
-    
+      {role !== UserInterface.Role.USER && (
+        <Button
+          className="fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 bg-indigo-400 text-white text-5xl shadow-lg hover:bg-indigo-600 hover:scale-110 transition-transform duration-200 focus:outline-none"
+          onClick={() => {
+            navigate("/add");
+          }}
+        >
+          +
+        </Button>
+      )}
+    </div>
   );
 }

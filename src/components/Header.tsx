@@ -22,7 +22,7 @@ export default function Header() {
   }
 
   return (
-    <div className='flex bg-[#91ABFF] justify-between items-center'>
+    <div className='flex justify-between items-center bg-[#91ABFF] w-screen'>
       <div className='flex items-center gap-4'>
         <h1 className='px-4 py-0 text-[64px] font-[600]'>
           ACADIVERSE
@@ -30,15 +30,15 @@ export default function Header() {
         <NavigationMenu>
           <NavigationMenuList>
             <NavigationMenuItem className="flex gap-4 font-bold">
-              <NavigationMenuLink onClick={() => {navigate('/')}} className='text-xl'>Home</NavigationMenuLink>
-              <NavigationMenuLink onClick={() => {navigate('/about-us')}} className='text-xl'>About Us</NavigationMenuLink>
+              <NavigationMenuLink onClick={() => {navigate('/')}} className='text-xl hover:scale-110 transition-transform duration-200 focus:outline-none cursor-pointer'>Home</NavigationMenuLink>
+              <NavigationMenuLink onClick={() => {navigate('/about-us')}} className='text-xl hover:scale-110 transition-transform duration-200 focus:outline-none cursor-pointer'>About Us</NavigationMenuLink>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
       </div>
-      <div className='flex items-center gap-4 p-4'>
+      <div className='flex items-center gap-4 mr-4'>
         <Input type='text' placeholder='Search' />
-        <AvatarIcon width='56' height='56' onClick={handleAvatarClick}/>
+        <AvatarIcon width='56' height='56' className="hover:scale-110 transition-transform duration-200 focus:outline-none cursor-pointer" onClick={handleAvatarClick}/>
         {
           userEmail.length > 1 && (
             <span>
