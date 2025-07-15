@@ -36,7 +36,12 @@ export default function Home() {
     try {
       const result = await eventService.getEvents();
       if (result && result.status) {
-        setEvents(result.data);
+        const currentDate = new Date (Date.now());
+        const unexpiredEvents = result.data.filter((event: EventInterface.Event) => {
+          const signupDeadline = new Date (event.signupDeadline);
+          return (signupDeadline >= currentDate);
+        });
+        setEvents(unexpiredEvents);
         fetchFilters(result.data);
         hideLoading();
       }
@@ -50,7 +55,6 @@ export default function Home() {
     let tags: string[] = response?.map(
       e => e.tags
     ).flat(1)
-    console.log(events);
     // Only keep unique tags
     tags = tags.filter(function(tag, pos) {
       return tags.indexOf(tag) == pos
