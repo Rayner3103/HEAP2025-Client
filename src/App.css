@@ -46,3 +46,16 @@ body {
 div {
   font-family: 'Alumni Sans', 'sans-serif';
 }
+
+/* Hide scrollbar*/
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.process-newline{
+  white-space: pre-wrap;
+}

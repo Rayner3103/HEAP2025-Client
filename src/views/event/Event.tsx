@@ -45,7 +45,7 @@ export default function Event () {
     }
     navigate('/');
   }, [eventId])
-
+  
   return (
     <div className='mx-4'>
       {/* Title and Tag */}
@@ -76,7 +76,7 @@ export default function Event () {
                 <img
                   src={event?.image}
                   alt={event?.organisation}
-                  className="w-32 h-auto mb-4"
+                  className="max-w-128 h-auto mb-4"
                 />
               )}
           </div>
@@ -88,15 +88,19 @@ export default function Event () {
               {event?.eventType}
             </span>
             <div className="space-y-1 py-4">
-              <p className="text-sm">{event?.description}</p>
+              <p className="text-sm process-newline">{event?.description}</p>
             </div>
           </div>
 
-          {/* For Queries */}
-          <div>
-            <h3 className="font-bold mt-6">For Queries:</h3>
-            <p className="text-sm">{event?.additionalInformation}</p>
-          </div>
+          {/* For Queries (Only display when there is text in additionalInformation) */}
+          {
+            event?.additionalInformation ? (
+              <div>
+                <h3 className="font-bold mt-6">Additional Information:</h3>
+                <p className="text-sm process-newline">{event?.additionalInformation}</p>
+              </div>
+            ) : (<div />)
+          }
         </div>
 
         {/* Right Panel */}

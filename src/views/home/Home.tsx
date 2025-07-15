@@ -13,6 +13,8 @@ import SectionFiltered from "@/views/home/SectionFiltered";
 import SectionAll from "@/views/home/SectionAll";
 import { useLoading } from "@/context/OverlayContext";
 import { se } from "date-fns/locale";
+import SectionFiltered from "@/views/home/SectionFiltered";
+import DisplaySection from "@/views/home/DisplaySection";
 import AuthContext from "@/context/AuthContext";
 import * as UserInterface from "@/interface/user";
 import { useNavigate } from "react-router-dom";
@@ -36,7 +38,12 @@ export default function Home() {
     try {
       const result = await eventService.getEvents();
       if (result && result.status) {
-        setEvents(result.data);
+        const currentDate = new Date (Date.now());
+        const unexpiredEvents = result.data.filter((event: EventInterface.Event) => {
+          const signupDeadline = new Date (event.signupDeadline);
+          return (signupDeadline >= currentDate);
+        });
+        setEvents(unexpiredEvents);
         fetchFilters(result.data);
         hideLoading();
       }
@@ -47,8 +54,9 @@ export default function Home() {
 
   const fetchFilters = (response: EventInterface.Event[]) => {
     // Extract out all tags and flatten them into string[]
-    let tags: string[] = response?.map((e) => e.tags).flat(1);
-    console.log(events);
+    let tags: string[] = response?.map(
+      e => e.tags
+    ).flat(1)
     // Only keep unique tags
     tags = tags.filter(function (tag, pos) {
       return tags.indexOf(tag) == pos;
@@ -125,7 +133,7 @@ export default function Home() {
         {/* Scrollable filter container */}
         <div
           ref={scrollContainerRef}
-          className="flex overflow-x-auto whitespace-nowrap py-2 px-2 scrollbar-hide flex-grow"
+          className="flex overflow-x-auto whitespace-nowrap p-2 scrollbar-hide flex-grow"
         >
           {filters.map((filter) => (
             <button
@@ -179,29 +187,33 @@ export default function Home() {
             ></path>
           </svg>
         </button>
-      </div>
-      {selectedFilters.length > 0 ? (
-        <div>
-          <h2 className="text-4xl font-bold mb-6 text-center pt-6">
-            OPPORTUNITIES
-          </h2>
-          <div className="flex flex-col items-center justify-center gap-4 mb-8 w-screen px-10">
-            <SectionFiltered events={events} filters={selectedFilters} />
-          </div>
-        </div>
-      ) : (
-        <div>
-          <h2 className="text-4xl font-bold mb-6 text-center pt-6">
-            OPPORTUNITIES
-          </h2>
-          <div className="flex flex-col items-center justify-center gap-4 mb-8 w-screen px-10">
-            <SectionWhatsNew events={events} />
-            <SectionCompetition events={events} />
-            <SectionHackathons events={events} />
-            <SectionAll events={events} />
-          </div>
-        </div>
-      )}
+    </div>
+        {
+          selectedFilters.length > 0 ? (
+            <div>
+              <h2 className="text-4xl font-bold mb-6 text-center pt-6">
+                OPPORTUNITIES
+              </h2>
+              <div className="flex flex-col items-center justify-center gap-4 mb-8 w-screen px-10">
+                <SectionFiltered events={events} filters={selectedFilters} />
+              </div>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-4xl font-bold mb-6 text-center pt-6">
+                OPPORTUNITIES
+              </h2>
+              <div className="flex flex-col items-center justify-center gap-4 mb-8 w-screen px-10">
+                <SectionWhatsNew events={events} />
+                <SectionCompetition events={events} />
+                <SectionHackathons events={events} />
+                <DisplaySection events={events} sectionTitle="All Opportunities"/>
+              </div>
+            </div>
+          )
+        }
+    </div>
+
 
       {role !== UserInterface.Role.USER && (
         <Button

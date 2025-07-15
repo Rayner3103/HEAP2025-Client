@@ -10,7 +10,7 @@ const CreateCard = ({ events }: { events: Event[] }) => {
         events.map((event, i) => (
           <div
             key={i}
-            className="flex flex-col items-center bg-white p-6 rounded-lg shadow-md h-78 w-96"
+            className="flex flex-col items-center bg-white p-6 rounded-lg shadow-md h-78 w-96 m-2"
             onClick={() => {
               navigate(`/event/${event.eventId}`);
             }}
@@ -25,7 +25,7 @@ const CreateCard = ({ events }: { events: Event[] }) => {
               )}
             </div>
             <div className="flex items-center flex-col w-full mt-auto">
-              <h2>
+              <h2 className="text-center">
                 <b>{event.title}</b>
               </h2>
               <div className="flex flex-wrap gap-2 my-2 justify-center max-h-20 overflow-hidden overflow-y-auto">
