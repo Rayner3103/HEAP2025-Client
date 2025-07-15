@@ -9,7 +9,6 @@ import { eventService } from "@/services/eventService";
 import SectionWhatsNew from "@/views/home/SectionWhatsNew";
 import SectionCompetition from "@/views/home/SectionCompetition";
 import SectionHackathons from "@/views/home/SectionHackathon";
-import SectionFiltered from "@/views/home/SectionFiltered";
 import SectionAll from "@/views/home/SectionAll";
 import { useLoading } from "@/context/OverlayContext";
 import { se } from "date-fns/locale";
@@ -41,7 +40,7 @@ export default function Home() {
         const currentDate = new Date (Date.now());
         const unexpiredEvents = result.data.filter((event: EventInterface.Event) => {
           const signupDeadline = new Date (event.signupDeadline);
-          return (signupDeadline >= currentDate);
+          return (!event.signupDeadline || signupDeadline >= currentDate);
         });
         setEvents(unexpiredEvents);
         fetchFilters(result.data);
@@ -212,7 +211,6 @@ export default function Home() {
             </div>
           )
         }
-    </div>
 
 
       {role !== UserInterface.Role.USER && (
