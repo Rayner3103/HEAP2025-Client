@@ -27,13 +27,12 @@ const readOnlyText = ["email"];
 
 // [Exports]
 export default function Profile() {
-  const { userId, token, clearAuth} =
-    useContext(AuthContext);
+  const { userId, token, clearAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const { showAlert, showConfirm } = useAlertDialog();
+  const { showLoading, hideLoading } = useLoading();
   const [user, setUser] = useState<UserInterface.User | null>(null);
   const [updateUser, setUpdateUser] = useState<UserInterface._User>({});
-  const { showLoading, hideLoading } = useLoading();
 
   const handleSignOut = () => {
     clearAuth();
@@ -41,13 +40,13 @@ export default function Profile() {
       title: "Success",
       message: "You are signed out.",
       okText: "Go to home page",
-      cancelText: 'Go to log in page',
+      cancelText: "Go to log in page",
       onConfirm: () => {
         navigate("/");
       },
       onCancel: () => {
-        navigate('/Login');
-      }
+        navigate("/Login");
+      },
     });
   };
 

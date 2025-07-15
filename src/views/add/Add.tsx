@@ -17,17 +17,20 @@ import ChipInput from "@/components/ChipInput";
 import * as EventInterface from "@/interface/event";
 import { eventService } from "@/services/eventService";
 import AuthContext from "@/context/AuthContext";
+import { useAlertDialog } from "@/context/AlertDialogContext";
+import { useLoading } from "@/context/OverlayContext";
+import { useNavigate } from "react-router-dom";
 
 type EventFormValues = {
   title: string;
   briefDescription?: string;
   description?: string;
   eventType: string;
-  organisers?: string;
+  organisation?: string;
   startTime: string;
   endTime: string;
   mode: string;
-  venue?: string;
+  location?: string;
   signupDeadline?: Date;
   signupLink: string;
   tags?: string[];
@@ -49,14 +52,18 @@ export default function AddEventForm() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tagObject, setTagObject] = useState({});
   const { token } = useContext(AuthContext);
+  const { showAlert, showConfirm } = useAlertDialog();
+  const { showLoading, hideLoading } = useLoading();
+  const navigate = useNavigate();
 
   const startTime = watch("startTime");
   const endTime = watch("endTime");
 
   const onSubmit = async (data: EventFormValues) => {
+    showLoading();
     const formData = new FormData();
 
-    formData.append("origin", 'upload');
+    formData.append("origin", "upload");
 
     // Add primitive fields
     formData.append("title", data.title);
@@ -73,11 +80,11 @@ export default function AddEventForm() {
     if (data.description) {
       formData.append("description", data.description);
     }
-    if (data.organisers) {
-      formData.append("organisers", data.organisers);
+    if (data.organisation) {
+      formData.append("organisation", data.organisation);
     }
-    if (data.venue) {
-      formData.append("venue", data.venue);
+    if (data.location) {
+      formData.append("location", data.location);
     }
     if (data.link) {
       formData.append("link", data.link);
@@ -87,7 +94,7 @@ export default function AddEventForm() {
     }
 
     // Handle signupDeadline (convert Date to ISO string)
-    if (data.signupDeadline) {
+    if (data.signupDeadline && !isNaN(data.signupDeadline.valueOf())) {
       formData.append("signupDeadline", data.signupDeadline.toISOString());
     }
 
@@ -99,11 +106,40 @@ export default function AddEventForm() {
     if ("tags" in tagObject) {
       (tagObject.tags as string[]).forEach((tag) => {
         formData.append("tags", tag);
-      })
+      });
     }
-    const response = await eventService.createEvent(formData, token);
-    console.log("Form Submitted:", response, formData);
 
+    try {
+      const response = await eventService.createEvent(formData, token);
+      hideLoading();
+      if (response && response.status) {
+        showConfirm({
+          title: "Success",
+          message: "Event has been created.",
+          okText: "View event",
+          cancelText: "Go to home page",
+          onConfirm: () => {
+            navigate(`/event/${response.data}`);
+          },
+          onCancel: () => {
+            navigate("/");
+          },
+        });
+        return;
+      }
+      showAlert({
+        title: "Failure",
+        message: "Cannot create event",
+        onConfirm: () => {},
+      });
+    } catch (e: any) {
+      hideLoading();
+      showAlert({
+        title: "Failure",
+        message: e.message,
+        onConfirm: () => {},
+      });
+    }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,10 +260,10 @@ export default function AddEventForm() {
           />
         </div>
 
-        {/* Organisers */}
+        {/* organisation */}
         <div className="flex flex-col">
           <Label>Organiser(s)</Label>
-          <Input {...register("organisers")} />
+          <Input {...register("organisation")} />
         </div>
 
         {/* Start Time */}
@@ -261,16 +297,16 @@ export default function AddEventForm() {
           )}
         </div>
 
-        {/* Venue */}
+        {/* location */}
         <div className="flex flex-col">
-          <Label>Venue</Label>
-          <Input {...register("venue")} />
+          <Label>location</Label>
+          <Input {...register("location")} />
         </div>
 
         {/* Signup Deadline */}
         <div className="flex flex-col">
           <Label>Signup Deadline</Label>
-          <Input type="date" {...register("signupDeadline")} />
+          <Input type="date" {...register("signupDeadline", {valueAsDate: true})} />
         </div>
 
         {/* Tags (ChipInput) */}
