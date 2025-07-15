@@ -113,7 +113,7 @@ export default function Home() {
         {/* Scrollable filter container */}
         <div
           ref={scrollContainerRef}
-          className="flex overflow-x-auto whitespace-nowrap py-2 px-2 scrollbar-hide flex-grow"
+          className="flex overflow-x-auto whitespace-nowrap p-2 scrollbar-hide flex-grow"
         >
           {filters.map((filter) => (
             <button
