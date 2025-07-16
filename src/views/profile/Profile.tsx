@@ -137,135 +137,146 @@ export default function Profile() {
   }, []);
 
   return (
-    <div className="bg-[#FAF9E6] min-h-screen p-8">
-      {user && (
-        <form className="max-w-4xl mx-auto space-y-4">
-          {/* Read-only fields */}
-          {readOnlyText.map((key, i) => (
-            <div className="flex flex-col" key={i}>
-              <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-                {key}:
+    <div className="bg-[#FAF9E6] min-h-screen py-10 px-6 md:px-12">
+      <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-8 space-y-6">
+        <h1 className="text-4xl font-extrabold text-[#91ABFF] mb-8 text-center">
+          Your Profile
+        </h1>
+
+        {user && (
+          <form className="space-y-6">
+            {/* Read-only fields */}
+            {readOnlyText.map((key, i) => (
+              <div className="flex flex-col" key={i}>
+                <Label className="mb-1 text-sm font-semibold text-gray-800 capitalize">
+                  {key}
+                </Label>
+                <Input
+                  value={user[key as keyof UserInterface.User] ?? ""}
+                  readOnly
+                  className="mt-1 rounded-xl border border-gray-300 px-4 py-2 bg-gray-100 cursor-not-allowed"
+                />
+              </div>
+            ))}
+
+            {/* Editable text fields */}
+            {textFields.map((key, i) => (
+              <div className="flex flex-col" key={i}>
+                <Label className="mb-1 text-sm font-semibold text-gray-800 capitalize">
+                  {key}
+                </Label>
+                <Input
+                  value={
+                    updateUser[key as keyof UserInterface.User] ??
+                    user[key as keyof UserInterface.User]
+                  }
+                  onChange={(e) => handleFieldChange(e, key)}
+                  className="mt-1 rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-[#91ABFF]"
+                  placeholder={`Enter your ${key}`}
+                />
+              </div>
+            ))}
+
+            {/* Number fields */}
+            {numberFields.map((key, i) => (
+              <div className="flex flex-col" key={i}>
+                <Label className="mb-1 text-sm font-semibold text-gray-800 capitalize">
+                  {key}
+                </Label>
+                <Input
+                  type="number"
+                  value={
+                    updateUser[key as keyof UserInterface.User] ??
+                    user[key as keyof UserInterface.User]
+                  }
+                  onChange={(e) => handleFieldChange(e, key)}
+                  className="mt-1 rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-[#91ABFF]"
+                  placeholder={`Enter your ${key}`}
+                />
+              </div>
+            ))}
+
+            {/* Interests */}
+            <div className="flex flex-col">
+              <Label className="mb-1 text-sm font-semibold text-gray-800">
+                Interests
               </Label>
-              <Input
-                value={user[key as keyof UserInterface.User] ?? ""}
-                readOnly
-                className="rounded-md border border-gray-300 px-4 py-2"
+              <ChipInput
+                setStateFunction={setUpdateUser}
+                field="interests"
+                initialList={user.interests}
               />
             </div>
-          ))}
 
-          {/* Editable text fields */}
-          {textFields.map((key, i) => (
-            <div className="flex flex-col" key={i}>
-              <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-                {key}:
+            {/* Gender */}
+            <div className="flex flex-col">
+              <Label className="mb-1 text-sm font-semibold text-gray-800">
+                Gender
               </Label>
-              <Input
-                value={
-                  updateUser[key as keyof UserInterface.User] ??
-                  user[key as keyof UserInterface.User]
-                }
-                onChange={(e) => handleFieldChange(e, key)}
-                className="rounded-md border border-gray-300 px-4 py-2"
-              />
-            </div>
-          ))}
-
-          {/* Number fields */}
-          {numberFields.map((key, i) => (
-            <div className="flex flex-col" key={i}>
-              <Label className="mb-1 capitalize text-sm font-medium text-gray-800">
-                {key}:
-              </Label>
-              <Input
-                type="number"
-                value={
-                  updateUser[key as keyof UserInterface.User] ??
-                  user[key as keyof UserInterface.User]
-                }
-                onChange={(e) => handleFieldChange(e, key)}
-                className="rounded-md border border-gray-300 px-4 py-2"
-              />
-            </div>
-          ))}
-
-          {/* Interests */}
-          <div className="flex flex-col">
-            <Label className="mb-1 text-sm font-medium text-gray-800">
-              Interests:
-            </Label>
-            <ChipInput
-              setStateFunction={setUpdateUser}
-              field="interests"
-              initialList={user.interests}
-            />
-          </div>
-
-          {/* Gender */}
-          <div className="flex flex-col">
-            <Label className="mb-1 text-sm font-medium text-gray-800">
-              Gender:
-            </Label>
-            <Select
-              value={updateUser.gender ?? user.gender ?? ""}
-              onValueChange={(value) => handleEnumChange("gender", value)}
-            >
-              <SelectTrigger className="w-[200px] rounded-md border border-gray-300 px-4 py-2">
-                <SelectValue placeholder="Select gender" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(UserInterface.Gender).map(([key, value]) => (
-                  <SelectItem value={value} key={key}>
-                    {key.charAt(0) + key.slice(1).toLowerCase()}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Nationality */}
-          <div className="flex flex-col">
-            <Label className="mb-1 text-sm font-medium text-gray-800">
-              Nationality:
-            </Label>
-            <Select
-              value={updateUser.nationality ?? user.nationality ?? ""}
-              onValueChange={(value) => handleEnumChange("nationality", value)}
-            >
-              <SelectTrigger className="w-[200px] rounded-md border border-gray-300 px-4 py-2">
-                <SelectValue placeholder="Select nationality" />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(UserInterface.Nationality).map(
-                  ([key, value]) => (
+              <Select
+                value={updateUser.gender ?? user.gender ?? ""}
+                onValueChange={(value) => handleEnumChange("gender", value)}
+              >
+                <SelectTrigger className="w-[200px] mt-1 rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-[#91ABFF]">
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(UserInterface.Gender).map(([key, value]) => (
                     <SelectItem value={value} key={key}>
-                      {key.charAt(0) + key.slice(1).toLowerCase()}
+                      {key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()}
                     </SelectItem>
-                  )
-                )}
-              </SelectContent>
-            </Select>
-          </div>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Action buttons */}
-          <div className="flex gap-4 pt-4">
-            <Button
-              type="button"
-              onClick={handleUpdateProfile}
-              className="bg-black text-white px-6 py-2 rounded-md"
-            >
-              Update profile
-            </Button>
-            <Button
-              type="button"
-              onClick={handleSignOut}
-              className="bg-black text-white px-6 py-2 rounded-md"
-            >
-              Sign out
-            </Button>
-          </div>
-        </form>
-      )}
+            {/* Nationality */}
+            <div className="flex flex-col">
+              <Label className="mb-1 text-sm font-semibold text-gray-800">
+                Nationality
+              </Label>
+              <Select
+                value={updateUser.nationality ?? user.nationality ?? ""}
+                onValueChange={(value) =>
+                  handleEnumChange("nationality", value)
+                }
+              >
+                <SelectTrigger className="w-[200px] mt-1 rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-[#91ABFF]">
+                  <SelectValue placeholder="Select nationality" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(UserInterface.Nationality).map(
+                    ([key, value]) => (
+                      <SelectItem value={value} key={key}>
+                        {key.charAt(0).toUpperCase() +
+                          key.slice(1).toLowerCase()}
+                      </SelectItem>
+                    )
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex gap-4 pt-6">
+              <Button
+                type="button"
+                onClick={handleUpdateProfile}
+                className="flex-grow bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold py-3 rounded-full shadow-lg hover:from-pink-500 hover:to-indigo-500 transition"
+              >
+                Update Profile
+              </Button>
+              <Button
+                type="button"
+                onClick={handleSignOut}
+                className="flex-grow bg-gray-600 text-white font-bold py-3 rounded-full shadow-lg hover:bg-gray-700 transition"
+              >
+                Sign Out
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,20 +1,24 @@
-// TODO: general dialog context & component + event page
-import * as ReactRouter from 'react-router-dom';
-import * as React from 'react';
+import * as ReactRouter from "react-router-dom";
+import * as React from "react";
+import { motion } from "framer-motion";
+import { Pencil } from "lucide-react";
 
-import { eventService } from '@/services/eventService';
-import * as EventInterface from '@/interface/event';
-import { useLoading } from '@/context/OverlayContext';
-import AlertDialog from "@/components/AlertDialog";
+import { eventService } from "@/services/eventService";
+import * as EventInterface from "@/interface/event";
+import * as UserInterface from "@/interface/user";
+import { useLoading } from "@/context/OverlayContext";
+import { useAlertDialog } from "@/context/AlertDialogContext";
 
-export default function Event () {
+import AuthContext from "@/context/AuthContext";
+import { Button } from "@/components/ui/button";
+
+export default function Event() {
   const { eventId } = ReactRouter.useParams();
   const navigate = ReactRouter.useNavigate();
+  const { role, userId } = React.useContext(AuthContext);
   const { showLoading, hideLoading } = useLoading();
+  const { showAlert } = useAlertDialog();
 
-  const [open, setOpen] = React.useState(false);
-  const [dialogMessage, setDialogMessage] = React.useState("");
-  const [dialogTitle, setDialogTitle] = React.useState("");
   const [event, setEvent] = React.useState<EventInterface.Event | null>(null);
 
   const fetchEvent = async (eventId: string) => {
@@ -25,102 +29,155 @@ export default function Event () {
         setEvent(response.data);
         return;
       }
-      setDialogMessage("Cannot load event")
-      setDialogTitle("Error");
-      setOpen(true);
+      showAlert({
+        title: "Failure",
+        message: "Cannot load event",
+        onConfirm: () => {},
+      });
     } catch (e: any) {
       hideLoading();
-      setDialogMessage(e.message);
-      setDialogTitle("Error");
-      setOpen(true);
-    } 
-  }
+      showAlert({
+        title: "Failure",
+        message: e.message,
+        onConfirm: () => {},
+      });
+    }
+  };
 
   React.useEffect(() => {
     showLoading();
     if (eventId) {
       fetchEvent(eventId);
       return;
-      // fetch data & check if id valid
     }
-    navigate('/');
-  }, [eventId])
-  
+    navigate("/");
+  }, [eventId]);
+
   return (
-    <div className='mx-4'>
-      {/* Title and Tag */}
-      <h1 className="text-3xl font-semibold mb-2">{event?.title}</h1>
-      <div className="flex flex-wrap gap-2 my-2">
-        <span className="bg-indigo-400 text-white px-4 py-1 rounded-full text-sm font-medium">
+    <div className="mx-4">
+      {/* Title and Tags */}
+      <motion.h1
+        className="text-5xl font-extrabold mt-4 mb-4 bg-gradient-to-r from-indigo-500 to-pink-500 text-transparent bg-clip-text"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {event?.title}
+      </motion.h1>
+
+      <div className="flex flex-wrap gap-2 my-3">
+        <span className="bg-gradient-to-r from-blue-500 to-green-400 text-white px-4 py-1 rounded-full text-sm font-semibold shadow hover:scale-105 transition">
           {event?.eventType}
         </span>
-        {event?.tags &&
-          event?.tags.map((tag, index) => (
-            <span
-              key={index}
-              className="bg-indigo-400 text-white px-4 py-1 rounded-full text-sm font-medium"
-            >
-              {tag}
-            </span>
-          ))}
+        {event?.tags?.map((tag, index) => (
+          <span
+            key={index}
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow hover:scale-105 transition"
+          >
+            {tag}
+          </span>
+        ))}
       </div>
 
       {/* Main Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6 items-start">
         {/* Left Content */}
-        <div className="md:col-span-2 space-y-6">
+        <motion.div
+          className="md:col-span-2 space-y-8"
+          initial={{ opacity: 0, x: -30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           {/* About */}
           <div>
-            <h2 className="text-xl font-bold mb-2">About</h2>
-            {event?.image !== "" && (
-                <img
-                  src={event?.image}
-                  alt={event?.organisation}
-                  className="max-w-128 h-auto mb-4"
-                />
-              )}
+            <h2 className="text-2xl font-bold mb-3 text-gray-800">About</h2>
+            {event?.image && (
+              <img
+                src={event.image}
+                alt={event.organisation}
+                className="w-full rounded-2xl shadow-lg hover:scale-105 transition"
+              />
+            )}
           </div>
 
           {/* Organised By */}
           <div>
-            <h3 className="font-bold mb-2">Organised By:</h3>
-            <span className="bg-gray-400 text-white px-4 py-1 rounded-full text-sm font-medium">
+            <h3 className="text-lg font-semibold mb-2 text-gray-700">
+              Organised By: {event?.organisation}
+            </h3>
+            <span className="bg-gray-700 text-white px-3 py-1 rounded-full text-sm font-medium">
               {event?.eventType}
             </span>
-            <div className="space-y-1 py-4">
-              <p className="text-sm process-newline">{event?.description}</p>
-            </div>
+            <p className="text-gray-600 text-base mt-3 leading-relaxed process-newline">
+              {event?.description}
+            </p>
           </div>
 
-          {/* For Queries (Only display when there is text in additionalInformation) */}
-          {
-            event?.additionalInformation ? (
-              <div>
-                <h3 className="font-bold mt-6">Additional Information:</h3>
-                <p className="text-sm process-newline">{event?.additionalInformation}</p>
-              </div>
-            ) : (<div />)
-          }
-        </div>
+          {/* Additional Information */}
+          {event?.additionalInformation && (
+            <div>
+              <h3 className="text-lg font-semibold mt-5 text-gray-700">
+                Additional Information:
+              </h3>
+              <p className="text-gray-600 text-base leading-relaxed process-newline">
+                {event.additionalInformation}
+              </p>
+            </div>
+          )}
+        </motion.div>
 
         {/* Right Panel */}
-        <div>
-          <h2 className="text-lg font-bold mb-2">Details:</h2>
-          <div className="bg-gray-400 p-6 rounded-3xl space-y-4">
-            <p className="font-semibold capitalize">Event Mode: {event?.mode}</p>
-            <p className="font-semibold capitalize">Event Location: {event?.location ?? "unknown"}</p>
-            <p className="font-semibold capitalize">Signup Deadline: {event?.signupDeadline?.toLocaleString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}</p>
+        <motion.div
+          className="sticky top-24 bg-white/70 backdrop-blur-md p-6 rounded-3xl shadow-xl space-y-5 h-auto"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <h2 className="text-xl font-bold text-gray-800 mb-3">Details:</h2>
+          <p className="font-medium text-gray-700">
+            Event Mode: <span className="capitalize">{event?.mode}</span>
+          </p>
+          <p className="font-medium text-gray-700">
+            Location: <span>{event?.location ?? "Unknown"}</span>
+          </p>
+          <p className="font-medium text-gray-700">
+            Signup Deadline:{" "}
+            <span className="font-semibold text-red-500">
+              {event?.signupDeadline?.toLocaleString("en-GB", {
+                day: "2-digit",
+                month: "long",
+                year: "numeric",
+              })}
+            </span>
+          </p>
 
-            <div className="pt-8">
-              <ReactRouter.Link to={event?.signupLink ?? "/"} target='_blank'>
-              <button className="w-full bg-white text-black font-bold py-3 rounded-full text-lg hover:bg-gray-100">
+          {event?.origin === EventInterface.EventOrigin.WEB && (
+            <p className="font-medium text-gray-700">
+              Details of this event is obtained by a bot at {event.createdDateTime.toString()}.
+            </p>
+          )}
+
+          <div className="pt-4">
+            <ReactRouter.Link to={event?.signupLink ?? "/"} target="_blank">
+              <button className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold py-3 rounded-full text-lg hover:from-pink-500 hover:to-indigo-500 shadow-lg transition">
                 Register Here
               </button>
-              </ReactRouter.Link>
-            </div>
+            </ReactRouter.Link>
           </div>
-        </div>
+        </motion.div>
       </div>
+
+      {/* Floating Add Button */}
+      {(role === UserInterface.Role.ADMIN ||
+        (role === UserInterface.Role.ORGANISER &&
+          userId === event?.createdUserId)) && (
+        <Button
+          className="fixed bottom-6 right-6 z-50 rounded-full w-16 h-16 bg-gradient-to-br from-indigo-400 to-pink-500 text-white text-4xl shadow-xl hover:scale-110 hover:shadow-2xl active:scale-95 transition-all duration-300 ease-in-out"
+          onClick={() => navigate(`/edit/${eventId}`)}
+        >
+          <Pencil className="w-4 h-4" />
+        </Button>
+      )}
     </div>
-  )
+  );
 }

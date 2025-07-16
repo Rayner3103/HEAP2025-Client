@@ -14,6 +14,8 @@ import { LoadingProvider } from "./context/OverlayContext";
 import { AlertDialogProvider } from "@/context/AlertDialogContext";
 import LoadingOverlay from "./components/Overlay";
 import Add from "./views/add/Add";
+import Edit from "./views/edit/Edit";
+import { SearchProvider } from "./context/SearchContext";
 
 function App() {
   return (
@@ -21,18 +23,21 @@ function App() {
       <AuthProvider>
         <LoadingProvider>
           <AlertDialogProvider>
-            <Header />
-            <LoadingOverlay />
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about-us" element={<About />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/event/:eventId" element={<Event />} />
-              <Route path="/add" element={<Add />} />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
+            <SearchProvider>
+              <Header />
+              <LoadingOverlay />
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about-us" element={<About />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/event/:eventId" element={<Event />} />
+                <Route path="/edit/:eventId" element={<Edit />} />
+                <Route path="/add" element={<Add />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </SearchProvider>
           </AlertDialogProvider>
         </LoadingProvider>
       </AuthProvider>

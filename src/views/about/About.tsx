@@ -1,32 +1,81 @@
 import React from 'react';
 
+const teamMembers = [
+  {
+    name: 'Brian Leong Jie Ren',
+    role: 'Technical Lead',
+    photo: 'https://i.pravatar.cc/150?img=12',
+  },
+  {
+    name: 'Joel Soh Zhipeng',
+    role: 'Development & Research',
+    photo: 'https://i.pravatar.cc/150?img=15',
+  },
+  {
+    name: 'Rayner Sim Zhi Heng',
+    role: 'Systems & Security',
+    photo: 'https://i.pravatar.cc/150?img=20',
+  },
+  {
+    name: 'Geri Neo Zili',
+    role: 'Technical Development',
+    photo: 'https://i.pravatar.cc/150?img=30',
+  },
+  {
+    name: 'Leong Yan Lyn',
+    role: 'Strategy & User Experience',
+    photo: 'https://i.pravatar.cc/150?img=40',
+  },
+];
+
 export default function About() {
   return (
-    <div className="flex flex-col min-h-[80vh] bg-white">
-      <div className="flex flex-col justify-start px-16 pt-10">
-        <h1 className="text-7xl font-extrabold mb-8">ABOUT US</h1>
-        <p>Hi there! We're the Acadiverse team - a group of passionate university students who understand the struggle of finding meaningful academic opportunities firsthand. </p>
-        <p>As students ourselves, we've experienced the frustration of being overwhelmed by scattered information across platforms like Instagram, Telegram, and email. We know how valuable academic opportunities like hackathons, workshops, and networking events can be hidden in this digital clutter. Without a centralized source, too many of our peers miss out simply because they're uncertain about where to search or accidentally miss crucial deadlines.</p>
-        <p>That's why we created Acadiverse - to simplify and centralize access to academic events that matter. We wanted to build a user-friendly platform that empowers fellow students to take charge of their personal and academic growth by making opportunities easier to find and act on.</p>
-        <p>Our mission is simple: to ensure that no student misses out on life-changing opportunities because of poor information accessibility. We believe every motivated learner deserves a clear path to growth, and we're here to provide exactly that.</p>
-        <h1 className="text-6xl font-extrabold my-8">Meet the Team:</h1>
-        <div>
-          <p>Brian Leong Jie Ren - Technical Lead</p>
-          <p>Joel Soh Zhipeng - Development & Research</p>
-          <p>Rayner Sim Zhi Heng - Systems & Security</p>
-          <p>Geri Neo Zili - Technical Development</p>
-          <p>Leong Yan Lyn - Strategy & User Experience</p>
+    <div className="min-h-[80vh] py-16 px-6 md:px-12 flex flex-col">
+      {/* Content wrapper limits max width */}
+      <div className="max-w-5xl mx-auto w-full">
+        {/* Gradient Title */}
+        <h1 className="text-6xl md:text-7xl font-extrabold mb-10 bg-gradient-to-r from-indigo-500 to-pink-500 text-transparent bg-clip-text">
+          ABOUT US
+        </h1>
+
+        <div className="space-y-6 text-gray-700 leading-relaxed text-lg">
+          <p>
+            Hi there! We're the Acadiverse team - a group of passionate university students who understand the struggle of finding meaningful academic opportunities firsthand.
+          </p>
+          <p>
+            As students ourselves, we've experienced the frustration of being overwhelmed by scattered information across platforms like Instagram, Telegram, and email. We know how valuable academic opportunities like hackathons, workshops, and networking events can be hidden in this digital clutter. Without a centralized source, too many of our peers miss out simply because they're uncertain about where to search or accidentally miss crucial deadlines.
+          </p>
+          <p>
+            That's why we created Acadiverse - to simplify and centralize access to academic events that matter. We wanted to build a user-friendly platform that empowers fellow students to take charge of their personal and academic growth by making opportunities easier to find and act on.
+          </p>
+          <p>
+            Our mission is simple: to ensure that no student misses out on life-changing opportunities because of poor information accessibility. We believe every motivated learner deserves a clear path to growth, and we're here to provide exactly that.
+          </p>
         </div>
-        <p className='mt-6'>Together, we're building more than just a platform - we're creating a community where academic growth and opportunity discovery go hand in hand.</p>
-      </div>
-      {/* Decorative blocks for background effect */}
-      <div className="absolute top-0 left-0 w-full h-full -z-10">
-        <div className="bg-[#b6c0e3] absolute top-0 left-0 w-full h-32" />
-        <div className="bg-[#b6c0e3] absolute top-32 left-1/2 w-1/3 h-48" style={{transform: 'translateX(-50%)'}} />
-        <div className="bg-[#b6c0e3] absolute top-80 right-0 w-1/2 h-48" />
-        <div className="bg-[#b6c0e3] absolute bottom-0 right-0 w-1/4 h-64" />
-        <div className="bg-[#b6c0e3] absolute bottom-0 left-1/4 w-1/3 h-64" />
+
+        <h2 className="text-5xl md:text-6xl font-extrabold my-12 bg-gradient-to-r from-indigo-500 to-pink-500 text-transparent bg-clip-text">
+          Meet the Team:
+        </h2>
+
+        {/* Team album */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8">
+          {teamMembers.map((member) => (
+            <div key={member.name} className="flex flex-col items-center">
+              <img
+                src={member.photo}
+                alt={member.name}
+                className="w-32 h-32 rounded-full object-cover mb-4 shadow-lg"
+              />
+              <p className="text-center font-semibold text-gray-800">{member.name}</p>
+              <p className="text-center text-sm text-gray-500">{member.role}</p>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-10 text-gray-700 leading-relaxed text-lg">
+          Together, we're building more than just a platform - we're creating a community where academic growth and opportunity discovery go hand in hand.
+        </p>
       </div>
     </div>
-  )
+  );
 }

@@ -41,19 +41,35 @@ const AlertDialog = ({
   };
 
   return (
-    <ShadcnAlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
+    <ShadcnAlertDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      aria-modal="true"
+    >
+      <AlertDialogContent className="bg-white rounded-3xl shadow-xl p-6 max-w-lg mx-4">
+        <AlertDialogHeader className="mb-4">
+          <AlertDialogTitle className="text-2xl font-extrabold text-gray-800 bg-gradient-to-r from-indigo-500 to-pink-500 bg-clip-text text-transparent">
+            {title}
+          </AlertDialogTitle>
         </AlertDialogHeader>
-        <div className="py-4">{message}</div>
-        <AlertDialogFooter>
+        <div className="py-4 text-gray-700 text-base leading-relaxed">
+          <p>{message}</p>
+        </div>
+        <AlertDialogFooter className="flex justify-end gap-4 mt-6">
           {cancelText && (
-            <AlertDialogCancel onClick={handleCancel}>
+            <AlertDialogCancel
+              type="button"
+              onClick={handleCancel}
+              className="px-5 py-2 rounded-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold transition"
+            >
               {cancelText}
             </AlertDialogCancel>
           )}
-          <AlertDialogAction onClick={handleConfirm}>
+          <AlertDialogAction
+            type="button"
+            onClick={handleConfirm}
+            className="px-6 py-2 rounded-full bg-gradient-to-r from-indigo-300 to-pink-300 text-white font-bold hover:from-pink-300 hover:to-indigo-300 shadow-md transition"
+          >
             {okText}
           </AlertDialogAction>
         </AlertDialogFooter>
