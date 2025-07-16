@@ -16,7 +16,7 @@ export default function Login() {
   const { token, setToken, setUserId, setUserEmail, setRole } = useContext(AuthContext);
   const { showLoading, hideLoading } = useLoading();
   const { showAlert, showConfirm } = useAlertDialog();
-  const [email, setEmail] = useState("raynersimzhiheng@gmail.com");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
