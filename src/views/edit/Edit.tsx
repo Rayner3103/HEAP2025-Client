@@ -1,5 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,7 +20,7 @@ import { eventService } from "@/services/eventService";
 import AuthContext from "@/context/AuthContext";
 import { useAlertDialog } from "@/context/AlertDialogContext";
 import { useLoading } from "@/context/OverlayContext";
-import { useNavigate } from "react-router-dom";
+import * as UserInterface from '@/interface/user';
 
 type EventFormValues = {
   title: string;
@@ -39,7 +40,7 @@ type EventFormValues = {
   image?: FileList;
 };
 
-export default function AddEventForm() {
+export default function EditEventForm() {
   const {
     register,
     handleSubmit,
@@ -51,10 +52,11 @@ export default function AddEventForm() {
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tagObject, setTagObject] = useState({});
-  const { token } = useContext(AuthContext);
+  const { token, role } = useContext(AuthContext);
   const { showAlert, showConfirm } = useAlertDialog();
   const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
+  const { eventId } = useParams();
 
   const startTime = watch("startTime");
   const endTime = watch("endTime");
@@ -115,7 +117,7 @@ export default function AddEventForm() {
       if (response && response.status) {
         showConfirm({
           title: "Success",
-          message: "Event has been created.",
+          message: "Event has been updated.",
           okText: "View event",
           cancelText: "Go to home page",
           onConfirm: () => {
@@ -129,7 +131,7 @@ export default function AddEventForm() {
       }
       showAlert({
         title: "Failure",
-        message: "Cannot create event",
+        message: "Cannot update event",
         onConfirm: () => {},
       });
     } catch (e: any) {
@@ -161,30 +163,108 @@ export default function AddEventForm() {
     }
   };
 
+  const fetchEvent = async (eventId: string) => {
+    try {
+      const response = await eventService.getEventById(eventId);
+      hideLoading();
+      if (response && response.status) {
+        const fetchedEvent = response.data;
+
+        // Set form values
+        setValue("title", fetchedEvent.title);
+        setValue("eventType", fetchedEvent.eventType);
+        setValue("briefDescription", fetchedEvent.briefDescription || "");
+        setValue("description", fetchedEvent.description || "");
+        setValue("organisation", fetchedEvent.organisation || "");
+        setValue("startTime", fetchedEvent.startTime);
+        setValue("endTime", fetchedEvent.endTime);
+        setValue("mode", fetchedEvent.mode);
+        setValue("location", fetchedEvent.location || "");
+        setValue(
+          "signupDeadline",
+          fetchedEvent.signupDeadline
+            ? new Date(fetchedEvent.signupDeadline)
+            : undefined
+        );
+        setValue("signupLink", fetchedEvent.signupLink);
+        setValue("link", fetchedEvent.link || "");
+        setValue(
+          "additionalInformation",
+          fetchedEvent.additionalInformation || ""
+        );
+
+        if (fetchedEvent.tags) {
+          setTagObject({ tags: fetchedEvent.tags });
+        }
+
+        // Set preview image if available
+        if (fetchedEvent.image) {
+          if (Array.isArray(fetchedEvent.image)) {
+            setImagePreview(fetchedEvent.image[0]);
+          } else {
+            setImagePreview(fetchedEvent.image);
+          }
+        }
+
+        return;
+      }
+      showAlert({
+        title: "Failure",
+        message: "Cannot load event",
+        onConfirm: () => {},
+      });
+    } catch (e: any) {
+      hideLoading();
+      showAlert({
+        title: "Failure",
+        message: e.message,
+        onConfirm: () => {},
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (role === UserInterface.Role.USER) {
+      navigate(`/event/${eventId}`)
+    }
+    showLoading();
+    if (eventId) {
+      fetchEvent(eventId);
+      return;
+    }
+    navigate("/");
+  }, [eventId]);
+
   return (
     <div className="bg-[#FAF9E6] min-h-screen py-10 px-6 md:px-12">
       <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-8 space-y-6">
         <h1 className="text-4xl font-extrabold text-[#91ABFF] mb-6 text-center">
-          Create New Event
+          Edit Event
         </h1>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Title */}
           <div className="flex flex-col">
-            <Label className="text-lg font-semibold text-gray-800">Title *</Label>
+            <Label className="text-lg font-semibold text-gray-800">
+              Title *
+            </Label>
             <Input
               {...register("title", { required: "Title is required" })}
               className="mt-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#91ABFF]"
               placeholder="Event title"
             />
             {errors.title && (
-              <span className="text-red-500 text-sm mt-1">{errors.title.message}</span>
+              <span className="text-red-500 text-sm mt-1">
+                {errors.title.message}
+              </span>
             )}
           </div>
 
           {/* Event Type */}
           <div className="flex flex-col">
-            <Label className="text-lg font-semibold text-gray-800">Event Type *</Label>
+            <Label className="text-lg font-semibold text-gray-800">
+              Event Type *
+            </Label>
             <Select
               onValueChange={(value) => setValue("eventType", value)}
               {...register("eventType", { required: "Event type is required" })}
@@ -201,13 +281,17 @@ export default function AddEventForm() {
               </SelectContent>
             </Select>
             {errors.eventType && (
-              <span className="text-red-500 text-sm mt-1">{errors.eventType.message}</span>
+              <span className="text-red-500 text-sm mt-1">
+                {errors.eventType.message}
+              </span>
             )}
           </div>
 
           {/* Signup Link */}
           <div className="flex flex-col">
-            <Label className="text-lg font-semibold text-gray-800">Signup Link *</Label>
+            <Label className="text-lg font-semibold text-gray-800">
+              Signup Link *
+            </Label>
             <Input
               {...register("signupLink", {
                 required: "Signup link is required",
@@ -221,13 +305,17 @@ export default function AddEventForm() {
               placeholder="https://example.com/signup"
             />
             {errors.signupLink && (
-              <span className="text-red-500 text-sm mt-1">{errors.signupLink.message}</span>
+              <span className="text-red-500 text-sm mt-1">
+                {errors.signupLink.message}
+              </span>
             )}
           </div>
 
           {/* Mode */}
           <div className="flex flex-col">
-            <Label className="text-lg font-semibold text-gray-800">Mode *</Label>
+            <Label className="text-lg font-semibold text-gray-800">
+              Mode *
+            </Label>
             <Select
               onValueChange={(value) => setValue("mode", value)}
               {...register("mode", { required: "Mode is required" })}
@@ -244,13 +332,17 @@ export default function AddEventForm() {
               </SelectContent>
             </Select>
             {errors.mode && (
-              <span className="text-red-500 text-sm mt-1">{errors.mode.message}</span>
+              <span className="text-red-500 text-sm mt-1">
+                {errors.mode.message}
+              </span>
             )}
           </div>
 
           {/* Brief Description */}
           <div className="flex flex-col">
-            <Label className="text-lg font-semibold text-gray-800">Brief Description</Label>
+            <Label className="text-lg font-semibold text-gray-800">
+              Brief Description
+            </Label>
             <Input
               {...register("briefDescription")}
               className="mt-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#91ABFF]"
@@ -260,7 +352,9 @@ export default function AddEventForm() {
 
           {/* Description */}
           <div className="flex flex-col">
-            <Label className="text-lg font-semibold text-gray-800">Description</Label>
+            <Label className="text-lg font-semibold text-gray-800">
+              Description
+            </Label>
             <Textarea
               {...register("description")}
               className="mt-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#91ABFF]"
@@ -271,7 +365,9 @@ export default function AddEventForm() {
 
           {/* Organiser */}
           <div className="flex flex-col">
-            <Label className="text-lg font-semibold text-gray-800">Organiser(s)</Label>
+            <Label className="text-lg font-semibold text-gray-800">
+              Organiser(s)
+            </Label>
             <Input
               {...register("organisation")}
               className="mt-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#91ABFF]"
@@ -282,18 +378,24 @@ export default function AddEventForm() {
           {/* Start Time & End Time */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <Label className="text-lg font-semibold text-gray-800">Start Time</Label>
+              <Label className="text-lg font-semibold text-gray-800">
+                Start Time
+              </Label>
               <Input
                 type="time"
                 {...register("startTime")}
                 className="mt-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#91ABFF]"
               />
               {errors.startTime && (
-                <span className="text-red-500 text-sm mt-1">{errors.startTime.message}</span>
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.startTime.message}
+                </span>
               )}
             </div>
             <div className="flex flex-col">
-              <Label className="text-lg font-semibold text-gray-800">End Time</Label>
+              <Label className="text-lg font-semibold text-gray-800">
+                End Time
+              </Label>
               <Input
                 type="time"
                 {...register("endTime", {
@@ -306,7 +408,9 @@ export default function AddEventForm() {
                 className="mt-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#91ABFF]"
               />
               {errors.endTime && (
-                <span className="text-red-500 text-sm mt-1">{errors.endTime.message}</span>
+                <span className="text-red-500 text-sm mt-1">
+                  {errors.endTime.message}
+                </span>
               )}
             </div>
           </div>
@@ -314,7 +418,9 @@ export default function AddEventForm() {
           {/* Location & Signup Deadline */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <Label className="text-lg font-semibold text-gray-800">Location</Label>
+              <Label className="text-lg font-semibold text-gray-800">
+                Location
+              </Label>
               <Input
                 {...register("location")}
                 className="mt-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#91ABFF]"
@@ -322,7 +428,9 @@ export default function AddEventForm() {
               />
             </div>
             <div className="flex flex-col">
-              <Label className="text-lg font-semibold text-gray-800">Signup Deadline</Label>
+              <Label className="text-lg font-semibold text-gray-800">
+                Signup Deadline
+              </Label>
               <Input
                 type="date"
                 {...register("signupDeadline", { valueAsDate: true })}
@@ -336,14 +444,18 @@ export default function AddEventForm() {
             <Label className="text-lg font-semibold text-gray-800">Tags</Label>
             <ChipInput
               field="tags"
-              initialList={"tags" in tagObject ? (tagObject.tags as string[]) : []}
+              initialList={
+                "tags" in tagObject ? (tagObject.tags as string[]) : []
+              }
               setStateFunction={setTagObject}
             />
           </div>
 
           {/* Additional Information */}
           <div className="flex flex-col">
-            <Label className="text-lg font-semibold text-gray-800">Additional Information</Label>
+            <Label className="text-lg font-semibold text-gray-800">
+              Additional Information
+            </Label>
             <Textarea
               {...register("additionalInformation")}
               className="mt-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#91ABFF]"
@@ -378,7 +490,7 @@ export default function AddEventForm() {
             type="submit"
             className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold py-3 rounded-full text-lg hover:from-pink-500 hover:to-indigo-500 shadow-lg transition"
           >
-            Submit Event
+            Update Event
           </Button>
         </form>
       </div>
