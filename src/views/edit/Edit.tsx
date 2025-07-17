@@ -434,7 +434,7 @@ export default function EditEventForm() {
               <Input
                 type="time"
                 {...register("endTime", {
-                  validate: (value) =>
+                  validate: (value) => 
                     !value ||
                     (!startTime && "Start time should be specified") ||
                     value > startTime ||

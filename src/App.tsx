@@ -18,6 +18,7 @@ import Edit from "./views/edit/Edit";
 import { SearchProvider } from "./context/SearchContext";
 import OrganisationHome from "./views/organisation/OrganisationHome";
 import Wait from "./views/wait/Wait";
+import Reset from "./views/reset/Reset";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
                 <Route path="/add" element={<Add />} />
                 <Route path="/organisation" element={<OrganisationHome />} />
                 <Route path="/wait" element={<Wait/>} />
+                <Route path="/reset" element={<Reset/>} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </SearchProvider>
