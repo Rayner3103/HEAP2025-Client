@@ -30,10 +30,10 @@ export default function Header() {
   const isLoggedIn = userEmail && userEmail.length > 1;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#91ABFF]/90 backdrop-blur-md px-6 py-4 shadow-lg">
-      <div className="flex justify-between items-center">
+    <header className="sticky top-0 z-50 bg-[#91ABFF]/90 backdrop-blur-md px-6 py-4 shadow-lg ">
+      <div className="flex md:justify-between justify-center flex-wrap max-w-screen w-full gap-10">
         {/* Logo & Navigation */}
-        <div className="flex items-center gap-10">
+        <div className="flex gap-10">
           <h1
             className="text-3xl font-extrabold bg-gradient-to-r from-indigo-500 to-pink-500 text-transparent bg-clip-text cursor-pointer hover:scale-105 transition-transform duration-200"
             onClick={() => navigate("/")}
@@ -72,7 +72,7 @@ export default function Header() {
         </div>
 
         {/* Search & Avatar */}
-        <div className="flex items-center gap-5">
+        <div className="flex gap-5">
           <Input
             type="text"
             placeholder="Search"
