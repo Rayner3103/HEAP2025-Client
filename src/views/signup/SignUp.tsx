@@ -1,4 +1,5 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { HelpCircle } from "lucide-react";
 
 import {
   Select,
@@ -7,6 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -68,9 +75,9 @@ export default function SignUp() {
           title: "Success",
           message: "Signed up successfully.",
           okText: "Go to log in page",
-          cancelText: 'Go to home page',
+          cancelText: "Go to home page",
           onConfirm: () => navigate("/login"),
-          onCancel: () => navigate('/home'),
+          onCancel: () => navigate("/home"),
         });
         return;
       }
@@ -119,17 +126,31 @@ export default function SignUp() {
             />
           </div>
 
-          <div>
-            <Label className="mb-1 text-sm font-semibold text-gray-800">
-              Password
-            </Label>
-            <PasswordInput
-              placeholder="Password"
-              onChange={handlePasswordChange}
-              value={password}
-              className="rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:ring-2 focus:ring-indigo-400 transition"
-            />
-          </div>
+          <TooltipProvider>
+            <div>
+              <div className="flex items-center gap-1 mb-1">
+                <Label className="text-sm font-semibold text-gray-800">
+                  Password
+                </Label>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="w-4 h-4 text-gray-500 hover:text-indigo-600 cursor-pointer" />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={4}>
+                    <p>
+                      Must be at least 8 characters with a number and symbol
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
+              <PasswordInput
+                placeholder="Password"
+                onChange={handlePasswordChange}
+                value={password}
+                className="rounded-lg border border-gray-300 px-4 py-3 shadow-sm focus:ring-2 focus:ring-indigo-400 transition"
+              />
+            </div>
+          </TooltipProvider>
 
           <div>
             <Label className="mb-1 text-sm font-semibold text-gray-800">
@@ -195,6 +216,7 @@ export default function SignUp() {
 
           <Button
             onClick={handleSignUp}
+            type="submit"
             disabled={
               password === "" || email === "" || password !== confirmPassword
             }
