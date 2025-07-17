@@ -4,7 +4,7 @@ export default function Wait() {
       <div className="max-w-5xl mx-auto w-full">
         <div className="space-y-6 text-gray-700 leading-relaxed text-3xl text-center">
           <p>
-            Thank you for having an interests in sharing your events on our
+            Thank you for your interest in sharing your events on our
             platform. Our admins will contact you via email to verify your
             identity.
           </p>
