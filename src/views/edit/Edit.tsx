@@ -20,7 +20,9 @@ import { eventService } from "@/services/eventService";
 import AuthContext from "@/context/AuthContext";
 import { useAlertDialog } from "@/context/AlertDialogContext";
 import { useLoading } from "@/context/OverlayContext";
-import * as UserInterface from '@/interface/user';
+import * as UserInterface from "@/interface/user";
+
+const UPLOAD_URL = import.meta.env.VITE_SERVER_ASSET_PATH;
 
 type EventFormValues = {
   title: string;
@@ -76,24 +78,12 @@ export default function EditEventForm() {
     formData.append("signupLink", data.signupLink);
 
     // Optional fields
-    if (data.briefDescription) {
-      formData.append("briefDescription", data.briefDescription);
-    }
-    if (data.description) {
-      formData.append("description", data.description);
-    }
-    if (data.organisation) {
-      formData.append("organisation", data.organisation);
-    }
-    if (data.location) {
-      formData.append("location", data.location);
-    }
-    if (data.link) {
-      formData.append("link", data.link);
-    }
-    if (data.additionalInformation) {
-      formData.append("additionalInformation", data.additionalInformation);
-    }
+    formData.append("briefDescription", data.briefDescription?? '');
+    formData.append("description", data.description?? '');
+    formData.append("organisation", data.organisation?? '');
+    formData.append("location", data.location?? '');
+    formData.append("link", data.link?? '');
+    formData.append("additionalInformation", data.additionalInformation?? '');
 
     // Handle signupDeadline (convert Date to ISO string)
     if (data.signupDeadline && !isNaN(data.signupDeadline.valueOf())) {
@@ -111,8 +101,10 @@ export default function EditEventForm() {
       });
     }
 
+    formData.append("eventId", eventId ?? "");
+
     try {
-      const response = await eventService.createEvent(formData, token);
+      const response = await eventService.updateEvent(formData, token);
       hideLoading();
       if (response && response.status) {
         showConfirm({
@@ -200,7 +192,7 @@ export default function EditEventForm() {
         // Set preview image if available
         if (fetchedEvent.image) {
           if (Array.isArray(fetchedEvent.image)) {
-            setImagePreview(fetchedEvent.image[0]);
+            setImagePreview(`${UPLOAD_URL}/${fetchedEvent.image[0]}`);
           } else {
             setImagePreview(fetchedEvent.image);
           }
@@ -223,9 +215,52 @@ export default function EditEventForm() {
     }
   };
 
+  const handleDelete = async () => {
+    showLoading();
+    try {
+      const response = await eventService.deleteEvent(eventId?? "", token);
+      hideLoading();
+      if (response && response.status) {
+        showConfirm({
+          title: "Success",
+          message: "Event has been deleted.",
+          okText: "View event",
+          cancelText: "Go to home page",
+          onConfirm: () => {
+            navigate(`/event/${response.data}`);
+          },
+          onCancel: () => {
+            navigate("/");
+          },
+        });
+        showAlert({
+          title: "Success",
+          message: "Event has been deleted.",
+          okText: "Go to home page",
+          onConfirm: () => {
+            navigate("/organisation");
+          },
+        });
+        return;
+      }
+      showAlert({
+        title: "Failure",
+        message: "Cannot update event",
+        onConfirm: () => {},
+      });
+    } catch (e: any) {
+      hideLoading();
+      showAlert({
+        title: "Failure",
+        message: e.message,
+        onConfirm: () => {},
+      });
+    }
+  }
+
   useEffect(() => {
     if (role === UserInterface.Role.USER) {
-      navigate(`/event/${eventId}`)
+      navigate(`/event/${eventId}`);
     }
     showLoading();
     if (eventId) {
@@ -486,12 +521,32 @@ export default function EditEventForm() {
           </div>
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold py-3 rounded-full text-lg hover:from-pink-500 hover:to-indigo-500 shadow-lg transition"
-          >
-            Update Event
-          </Button>
+          <div className="flex flex-row gap-4">
+            <Button
+              type="button"
+              onClick={() => {
+                showConfirm({
+                  title: "Confirm Delete",
+                  message: "Are you sure you want to delete this event?",
+                  okText: "Yes",
+                  cancelText: "Cancel",
+                  onConfirm: () => {
+                    handleDelete();
+                  },
+                  onCancel: () => {},
+                });
+              }}
+              className="flex flex-grow bg-gradient-to-r from-red-500 to-red-700 text-white font-bold py-3 rounded-full text-lg hover:from-red-600 hover:to-red-800 shadow-lg transition"
+            >
+              Delete Event
+            </Button>
+            <Button
+              type="submit"
+              className="flex flex-grow bg-gradient-to-r from-indigo-500 to-pink-500 text-white font-bold py-3 rounded-full text-lg hover:from-pink-500 hover:to-indigo-500 shadow-lg transition"
+            >
+              Update Event
+            </Button>
+          </div>
         </form>
       </div>
     </div>

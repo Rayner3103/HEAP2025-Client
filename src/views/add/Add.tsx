@@ -20,6 +20,7 @@ import AuthContext from "@/context/AuthContext";
 import { useAlertDialog } from "@/context/AlertDialogContext";
 import { useLoading } from "@/context/OverlayContext";
 import { useNavigate } from "react-router-dom";
+import * as UserInterface from "@/interface/user";
 
 type EventFormValues = {
   title: string;
@@ -51,7 +52,7 @@ export default function AddEventForm() {
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [tagObject, setTagObject] = useState({});
-  const { token } = useContext(AuthContext);
+  const { token, role } = useContext(AuthContext);
   const { showAlert, showConfirm } = useAlertDialog();
   const { showLoading, hideLoading } = useLoading();
   const navigate = useNavigate();
@@ -122,7 +123,11 @@ export default function AddEventForm() {
             navigate(`/event/${response.data}`);
           },
           onCancel: () => {
-            navigate("/");
+            if (role === UserInterface.Role.ORGANISER) {
+              navigate('/organisation');
+            } else {
+              navigate("/");
+            }
           },
         });
         return;

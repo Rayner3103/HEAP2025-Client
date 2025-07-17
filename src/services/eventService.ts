@@ -38,6 +38,15 @@ export const eventService = {
       throw new Error(e.response?.data?.error || "Fetching events failed");
     }
   },
+  getEventsByUser: async (token: string) => {
+    try {
+      const res = await apiService.performRequest("POST", "/get_all", {}, token);
+      return res.data;
+    } catch (e: any) {
+      console.log("getEventByLink error:", e);
+      throw new Error(e.response?.data?.error || "Fetching events failed");
+    }
+  },
   getEventById: async (eventId: string) => {
     try {
       const res = await apiService.performRequest("GET", API_BASE_URL, {
@@ -66,16 +75,16 @@ export const eventService = {
   },
 
   updateEvent: async (
-    eventId: string,
-    updateData: JSON,
-    context: string
+    updateData: FormData,
+    token: string
   ) => {
     try {
       const res = await apiService.performRequest(
         "PATCH",
         API_BASE_URL,
-        { eventId: eventId, updateData: updateData },
-        context
+        updateData,
+        token,
+        true
       );
       return res.data;
     } catch (e: any) {
@@ -84,13 +93,13 @@ export const eventService = {
     }
   },
 
-  deleteEvent: async (eventId: string, context: string) => {
+  deleteEvent: async (eventId: string, token: string) => {
     try {
       const res = await apiService.performRequest(
         "DELETE",
-        API_BASE_URL,
-        { eventId: eventId },
-        context
+        `${API_BASE_URL}/${eventId}`,
+        { },
+        token
       );
       return res.data;
     } catch (e: any) {

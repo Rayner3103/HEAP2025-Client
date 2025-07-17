@@ -48,7 +48,7 @@ export const apiService = {
                     response = await apiClient.patch(url, data);
                     break;
                 case "DELETE":
-                    response = await apiClient.delete(url, data);
+                    response = await apiClient.delete(url);
                     break;
                 default:
                     throw new Error("Unsupported HTTP method");

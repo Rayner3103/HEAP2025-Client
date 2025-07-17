@@ -10,6 +10,7 @@ import { authService } from "@/services/authService";
 import * as GeneralUtils from "@/utils/general";
 import { useAlertDialog } from "@/context/AlertDialogContext";
 import { useLoading } from "@/context/OverlayContext";
+import * as UserInterface from "@/interface/user";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -34,6 +35,10 @@ export default function Login() {
       const res = await authService.login(email, password);
       hideLoading();
       if (res && res.status) {
+        if (res.data.role === UserInterface.Role.USER) {
+          navigate("/wait");
+          return;
+        }
         setToken(res.data.token);
         setUserId(res.data.id);
         setUserEmail(res.data.email);
@@ -43,7 +48,7 @@ export default function Login() {
           message: "You are signed in.",
           okText: "Go to home page",
           cancelText: 'Go to my profile',
-          onConfirm: () => navigate("/"),
+          onConfirm: () => navigate("/organisation"),
           onCancel: () => navigate('/profile'),
         });
       }
