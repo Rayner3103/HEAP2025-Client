@@ -4,32 +4,32 @@ const teamMembers = [
   {
     name: "Brian Leong Jie Ren",
     role: "Technical Lead",
-    photo: "https://i.pravatar.cc/150?img=12",
-    url: "http://www.example.com"
+    photo: "/profile_brian.png",
+    url: "https://www.linkedin.com/in/brian-leong-jie-ren/"
   },
   {
     name: "Joel Soh Zhipeng",
     role: "Development & Research",
-    photo: "https://i.pravatar.cc/150?img=15",
-    url: "http://www.example.com"
+    photo: "/profile_joel.png",
+    url: "/about-us"
   },
   {
     name: "Rayner Sim Zhi Heng",
     role: "Systems & Security",
-    photo: "https://i.pravatar.cc/150?img=20",
+    photo: "/profile_rayner.png",
     url: "http://www.linkedin.com/in/raynersimzhiheng"
   },
   {
     name: "Geri Neo Zili",
     role: "Technical Development",
-    photo: "https://i.pravatar.cc/150?img=30",
-    url: "http://www.example.com"
+    photo: "/profile_geri.png",
+    url: "https://www.linkedin.com/in/geri-neo-8865a3341/"
   },
   {
     name: "Leong Yan Lyn",
     role: "Strategy & User Experience",
-    photo: "https://i.pravatar.cc/150?img=40",
-    url: "http://www.example.com"
+    photo: "/profile_yanlyn.png",
+    url: "https://www.linkedin.com/in/yan-lyn-leong/"
   },
 ];
 
