@@ -34,12 +34,14 @@ export default function Header() {
       <div className="flex md:justify-between justify-center flex-wrap max-w-screen w-full gap-10">
         {/* Logo & Navigation */}
         <div className="flex gap-10">
-          <h1
-            className="text-3xl font-extrabold bg-gradient-to-r from-indigo-500 to-pink-500 text-transparent bg-clip-text cursor-pointer hover:scale-105 transition-transform duration-200"
-            onClick={() => navigate("/")}
-          >
-            ACADIVERSE
-          </h1>
+          <div className="crop self-center">
+            <img
+              src="/logo_transparent.svg" 
+              alt="ACADIVERSE"
+              onClick={() => navigate("/")}
+              className="cursor-pointer hover:scale-105 transition-transform duration-200 self-center"
+            />
+          </div>
 
           <NavigationMenu>
             <NavigationMenuList className="flex gap-6">
@@ -76,13 +78,13 @@ export default function Header() {
           <Input
             type="text"
             placeholder="Search"
-            className="w-36 md:w-64 rounded-full px-4 py-3 shadow-md text-gray-800 border border-gray-300 bg-gray-100 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 ease-in-out"
+            className="w-36 md:w-64 rounded-full px-4 py-3 shadow-md text-gray-800 border border-gray-300 bg-gray-100 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 ease-in-out self-center"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
           <div
-            className={`rounded-full p-1 cursor-pointer transition-transform duration-200 ${
+            className={`rounded-full p-1 cursor-pointer transition-transform duration-200 w-12 h-12 self-center ${
               isLoggedIn
                 ? "bg-gradient-to-br from-indigo-400 to-pink-500 shadow-md ring-2 ring-indigo-200 hover:scale-110"
                 : "bg-gray-300 text-gray-600 ring-1 ring-gray-400 hover:scale-105"
