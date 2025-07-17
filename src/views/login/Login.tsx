@@ -74,6 +74,10 @@ export default function Login() {
     navigate("/signup");
   };
 
+  const routeToForgotPassword = () => {
+    navigate("/reset");
+  };
+
   useEffect(() => {
     if (token !== '') {
       navigate('/');
@@ -118,7 +122,7 @@ export default function Login() {
         <div className="flex justify-between text-sm text-indigo-600 mt-1">
           <button
             type="button"
-            onClick={() => console.log("Forgot Password")}
+            onClick={routeToForgotPassword}
             className="hover:underline focus:outline-none focus:ring-1 focus:ring-indigo-400 rounded"
           >
             Forgot Password
