@@ -17,6 +17,7 @@ import AuthContext from "@/context/AuthContext";
 import * as UserInterface from "@/interface/user";
 import { useNavigate } from "react-router-dom";
 import { useSearch } from "@/context/SearchContext";
+import { useAlertDialog } from "@/context/AlertDialogContext";
 
 // [Globals]
 interface Filter {
@@ -32,11 +33,13 @@ export default function Home() {
   const { search } = useSearch();
   const [filters, setFilters] = useState<Filter[]>([]);
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const { showAlert } = useAlertDialog();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const fetchEvent = async () => {
     try {
       const result = await eventService.getEvents();
+      hideLoading();
       if (result && result.status) {
         const currentDate = new Date(Date.now());
         const unexpiredEvents = result.data.filter(
@@ -47,10 +50,15 @@ export default function Home() {
         );
         setEvents(unexpiredEvents);
         fetchFilters(result.data);
-        hideLoading();
       }
     } catch (e: any) {
-      console.log(e);
+      hideLoading();
+      showAlert({
+        title: "Failure",
+        message: e.message,
+        okText: "Retry",
+        onConfirm: () => {fetchEvent()},
+      });
     }
   };
 

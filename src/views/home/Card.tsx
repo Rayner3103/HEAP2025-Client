@@ -1,6 +1,8 @@
 import { Event } from "@/interface/event";
 import * as ReactRouter from "react-router-dom";
 
+const UPLOAD_URL = import.meta.env.VITE_SERVER_ASSET_PATH;
+
 const CreateCard = ({ events }: { events: Event[] }) => {
   const navigate = ReactRouter.useNavigate();
 
@@ -17,7 +19,7 @@ const CreateCard = ({ events }: { events: Event[] }) => {
             <div className="flex w-full justify-center overflow-hidden rounded-xl mb-4 h-48">
               {event.image ? (
                 <img
-                  src={event.image}
+                  src={Array.isArray(event.image) ? `${UPLOAD_URL}/${event.image[0]}` : event.image}
                   alt={event.organisation}
                   className="h-full w-full object-cover rounded-xl transition-transform duration-300 hover:scale-105"
                 />
