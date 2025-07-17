@@ -68,13 +68,13 @@ export default function Event() {
       </motion.h1>
 
       <div className="flex flex-wrap gap-2 my-3">
-        <span className="bg-gradient-to-r from-blue-500 to-green-400 text-white px-4 py-1 rounded-full text-sm font-semibold shadow hover:scale-105 transition">
+        <span className="bg-gradient-to-r from-blue-500 to-green-400 text-white px-4 py-1 rounded-full text-sm font-semibold shadow transition">
           {event?.eventType}
         </span>
         {event?.tags?.map((tag, index) => (
           <span
             key={index}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow hover:scale-105 transition"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow transition"
           >
             {tag}
           </span>
@@ -97,7 +97,7 @@ export default function Event() {
               <img
                 src={Array.isArray(event.image) ? `${UPLOAD_URL}/${event.image[0]}` : event.image}
                 alt={event.organisation}
-                className="w-full rounded-2xl shadow-lg hover:scale-105 transition"
+                className="w-full rounded-2xl shadow-lg transition"
               />
             )}
           </div>
