@@ -1,6 +1,6 @@
 # Acadiverse — Frontend
 
-Acadiverse is a web platform designed to connect tertiary students with academic and professional events. It aggregates events from public sources and allows verified organisations to post events directly. This repository contains the frontend codebase for the Acadiverse platform.
+[**Acadiverse**](https://heap-2025-client.vercel.app) is a web platform designed to connect tertiary students with academic and professional events. It aggregates events from public sources and allows verified organisations to post events directly. This repository contains the frontend codebase for the Acadiverse platform.
 
 ## 🌐 Website Functionality
 
@@ -67,4 +67,8 @@ Acadiverse is a web platform designed to connect tertiary students with academic
 ## 🔗 Hosted Link
 
 https://heap-2025-client.vercel.app/
+
+
+
+
 
