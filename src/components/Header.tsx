@@ -33,9 +33,9 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-[#91ABFF]/90 backdrop-blur-md px-6 py-4 shadow-lg ">
-      <div className="flex md:justify-between justify-center flex-wrap max-w-screen w-full gap-10">
+      <div className="flex md:justify-between justify-center flex-wrap max-w-screen w-full md:gap-10 gap-5">
         {/* Logo & Navigation */}
-        <div className="flex gap-10">
+        <div className="flex md:gap-10 gap-1">
           <div className="crop self-center">
             <img
               src="/logo_transparent.svg"
@@ -46,7 +46,7 @@ export default function Header() {
           </div>
 
           <NavigationMenu>
-            <NavigationMenuList className="flex gap-6">
+            <NavigationMenuList className="flex md:gap-6 gap-2">
               {role !== UserInterface.Role.ORGANISER && (
                 <NavigationMenuItem>
                   <NavigationMenuLink
@@ -94,7 +94,7 @@ export default function Header() {
           <Input
             type="text"
             placeholder="Search"
-            className="w-36 md:w-64 rounded-full px-4 py-3 shadow-md text-gray-800 border border-gray-300 bg-gray-100 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 ease-in-out self-center"
+            className="w-64 rounded-full px-4 py-3 shadow-md text-gray-800 border border-gray-300 bg-gray-100 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 ease-in-out self-center"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
