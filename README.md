@@ -68,6 +68,10 @@
 
 https://heap-2025-client.vercel.app/
 
+## 🔗 Server Repo
+
+https://github.com/Rayner3103/HEAP2025-Server/
+
 
 
 
